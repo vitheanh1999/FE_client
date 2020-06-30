@@ -1,0 +1,7 @@
+.DS_STORE
+.scannerwork
+.vscode
+.sonarlint
+.ideal
+sonar-project.properties
+node_modules

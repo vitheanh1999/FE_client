@@ -1,0 +1,4 @@
+- 2019-10-30 => Update jwt key
+- 2019-10-30 => Update login = true
+- 2019-11-14 => Update login url
+- 2019-12-27 => Update CI/CD

@@ -1,0 +1,2 @@
+export const CHECK_MAINTAIN = 'CHECK_MAINTAIN';
+export const SET_MAINTAIN = 'SET_MAINTAIN';

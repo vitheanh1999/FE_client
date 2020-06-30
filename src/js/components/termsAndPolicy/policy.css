@@ -1,0 +1,93 @@
+@charset "UTF-8";
+
+#TermAndPolicy {
+  margin: 2em;
+}
+
+#TermAndPolicy h1 {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  margin: 1.5em 0;
+}
+#TermAndPolicy ul ul {
+  /* margin: 0 0 20px 20px; */
+}
+#TermAndPolicy li {
+  /* margin: 0 0 10px 0;   */
+}
+#TermAndPolicy ul > li {
+  background: #fff;
+  border-radius: 1em;
+  margin: 0 auto 0.6em;
+  padding: 0.6em;
+}
+#TermAndPolicy p {
+  /* margin: 0 0 20px 0; */
+}
+#TermAndPolicy h2 {
+  background: #0A647A;
+  border-radius: 0.6em 0 0 0.6em;
+  color: #fff;
+  font-size: 1.5em;
+  margin: 0 0 1.2em -1.5em;
+  padding: 0.5em 1.5em 2px 1em;
+  width: 100%;
+}
+#TermAndPolicy h3 {
+  font-size: 1em;
+  font-weight: 700;
+}
+#TermAndPolicy .date {
+  text-align: right;
+  margin: 2em 0;
+}
+
+#TermAndPolicy table{
+  width: 100%;
+  border-collapse:separate;
+  border-spacing: 0;
+}
+
+#TermAndPolicy table th:first-child{
+  border-radius: 5px 0 0 0;
+}
+
+#TermAndPolicy table th:last-child{
+  border-radius: 0 5px 0 0;
+  border-right: 1px solid #3c6690;
+}
+
+#TermAndPolicy table th{
+  text-align: center;
+  color:white;
+  background: linear-gradient(#829ebc,#225588);
+  border-left: 1px solid #3c6690;
+  border-top: 1px solid #3c6690;
+  border-bottom: 1px solid #3c6690;
+  box-shadow: 0px 1px 1px rgba(255,255,255,0.3) inset;
+  width: 25%;
+  padding: 10px 0;
+}
+
+#TermAndPolicy table td{
+  text-align: center;
+  border-left: 1px solid #a8b7c5;
+  border-bottom: 1px solid #a8b7c5;
+  border-top:none;
+  box-shadow: 0px -3px 5px 1px #eee inset;
+  width: 25%;
+  padding: 10px;
+}
+
+#TermAndPolicy table td:last-child{
+  border-right: 1px solid #a8b7c5;
+}
+
+#TermAndPolicy table tr:last-child td:first-child {
+  border-radius: 0 0 0 5px;
+}
+
+#TermAndPolicy table tr:last-child td:last-child {
+  border-radius: 0 0 5px 0;
+}

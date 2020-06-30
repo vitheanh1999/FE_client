@@ -1,0 +1,19 @@
+{
+  "have_an_acc": "If you have an account",
+  "not_register": "Not registered ?",
+  "welcome":"Welcome To Free Edition",
+  "register_now":"Register now",
+  "login_by_luc888": "Login By LUC888",
+  "emailAddress": "EMAIL ADDRESS",
+  "password": "PASSWORD ",
+  "newPassword": "New password",
+  "confirmPassword": "Confirm password",
+  "invalidAgreeUseAgreement": "Please agree to the usage agreement",
+  "invalidPassword": "The password must be at least 8 characters long.",
+  "invalidConfirmPassword": "Password and confirm password must be the same",
+  "invalidEmail": "Invalid Email address",
+  "createAnAccount": "CREATE AN ACCOUNT",
+  "policyPrivacy": "Privacy Policy",
+  "termOfUser": "Terms and Conditions",
+  "and": "and"
+}

@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+/* base
+-------------------------------------------------------------- */
+html, body, html * {
+  margin: 0;
+}
+
+body {
+  background: #DEE3E4;
+  text-align: left;
+  color: #222;
+  font-family: "SF Pro JP","SF Pro Display","SF Pro Icons","Hiragino Kaku Gothic Pro","ヒラギノ角ゴ Pro W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","Helvetica Neue","Helvetica","Arial",sans-serif;
+  font-size: 100%;
+  font-size-adjust: none;
+  font-stretch: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+  line-height: 1.6;
+}
+
+address {
+  font-style: normal;
+}
+
+a {
+  color: #2D889C;
+  text-decoration: none;
+}
+
+a:hover {
+  opacity: 0.8;
+  text-decoration: none;
+}
+
+img, a img {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: top;
+}

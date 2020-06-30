@@ -1,0 +1,4 @@
+// Constants String
+export const GET_BOT_TOTAL_GC_HISTORY = 'GET_BOT_TOTAL_GC_HISTORY';
+export const SET_BOT_TOTAL_GC_HISTORY = 'SET_BOT_TOTAL_GC_HISTORY';
+export const DEFAULT = 'DEFAULT';

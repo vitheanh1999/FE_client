@@ -1,0 +1,106 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js
+
+PATH: 
+  C:\Program Files\Java\jdk1.8.0_171\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\nodejs\;C:\Program Files\Git\cmd;C:\Users\phamh\AppData\Local\Android\Sdk\platform-tools;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft VS Code\bin;D:\SONAR Q\sonar-scanner-3.2.0.1227-windows\bin;C:\Program Files (x86)\Yarn\bin\;C:\ProgramData\ComposerSetup\bin;C:\Program Files\PostgreSQL\9.6\bin;C:\xampp\php;C:\Users\phamh\AppData\Roaming\npm;C:\Program Files\dotnet\;C:\Program Files (x86)\VietPN;
+
+Yarn version: 
+  1.13.0
+
+Node version: 
+  8.11.1
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz: Request failed "503 Service Unavailable"
+      at ResponseError.ExtendableBuiltin (C:\Program Files (x86)\Yarn\lib\cli.js:702:66)
+      at new ResponseError (C:\Program Files (x86)\Yarn\lib\cli.js:808:124)
+      at Request.<anonymous> (C:\Program Files (x86)\Yarn\lib\cli.js:65434:16)
+      at emitOne (events.js:116:13)
+      at Request.emit (events.js:211:7)
+      at Request.module.exports.Request.onRequestResponse (C:\Program Files (x86)\Yarn\lib\cli.js:130274:10)
+      at emitOne (events.js:116:13)
+      at ClientRequest.emit (events.js:211:7)
+      at HTTPParser.parserOnIncomingClient (_http_client.js:551:21)
+      at HTTPParser.parserOnHeadersComplete (_http_common.js:115:23)
+
+npm manifest: 
+  {
+    "name": "fresher-client",
+    "version": "0.0.1",
+    "description": "fresherClient",
+    "main": "index.html",
+    "scripts": {
+      "start": "webpack-dev-server --config ./webpack.dev.js",
+      "storybook": "start-storybook -p 6006 -c .storybook",
+      "server": "http-server -g",
+      "test": "mocha  --require  babel-register",
+      "tests": "mocha  --require babel-register --recursive './src/js/**/__tests__/*.*'",
+      "eslint": "eslint './src/js/**/*.*'",
+      "stylelint": "stylelint './src/css/*.*'",
+      "css": "node-sass ./src/css/style.scss ./public/css/style.css",
+      "watch-css": "node-sass -w ./src/css/style.scss ./public/css/style.css",
+      "webpack": "webpack --config=webpack.dev.js",
+      "build:dev": "node-sass ./src/css/style.scss ./public/css/style.css && webpack --config=webpack.dev.js",
+      "build:test": "node-sass ./src/css/style.scss ./public/css/style.css --output-style compressed && webpack --config=webpack.test.js",
+      "build:staging": "node-sass ./src/css/style.scss ./public/css/style.css --output-style compressed && webpack --config=webpack.staging.js",
+      "build:production": "node-sass ./src/css/style.scss ./public/css/style.css --output-style compressed && webpack --config=webpack.prod.js"
+    },
+    "author": "@fresher",
+    "private": true,
+    "dependencies": {
+      "axios": "^0.18.0",
+      "bulma": "^0.7.4",
+      "classnames": "^2.2.6",
+      "moment": "^2.24.0",
+      "prop-types": "^15.7.2",
+      "react": "^16.8.5",
+      "react-dom": "^16.8.5",
+      "react-redux": "^6.0.1",
+      "react-router-dom": "^5.0.0",
+      "redux": "^4.0.1",
+      "redux-saga": "^1.0.2",
+      "styled-components": "^4.2.0",
+      "validator": "^10.11.0"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.4.0",
+      "@babel/preset-env": "^7.4.2",
+      "@babel/preset-react": "^7.0.0",
+      "@storybook/addon-actions": "^5.0.5",
+      "@storybook/addon-notes": "^5.0.5",
+      "@storybook/addon-viewport": "^5.0.5",
+      "@storybook/addons": "^5.0.5",
+      "@storybook/react": "^5.0.5",
+      "babel-loader": "^8.0.5",
+      "babel-polyfill": "^6.26.0",
+      "chai": "^4.2.0",
+      "enzyme": "^3.9.0",
+      "enzyme-adapter-react-16": "^1.11.2",
+      "eslint": "^5.16.0",
+      "eslint-config-airbnb": "^17.1.0",
+      "eslint-plugin-import": "^2.16.0",
+      "eslint-plugin-jsx-a11y": "^6.2.1",
+      "eslint-plugin-react": "^7.12.4",
+      "file-loader": "^3.0.1",
+      "html-webpack-plugin": "^3.2.0",
+      "http-server": "^0.11.1",
+      "jsdom": "^14.0.0",
+      "mocha": "^6.0.2",
+      "node-sass": "^4.11.0",
+      "stylelint": "^9.10.1",
+      "stylelint-config-standard": "^18.2.0",
+      "webpack": "^4.29.6",
+      "webpack-cli": "^3.3.0",
+      "webpack-dev-server": "^3.2.1",
+      "webpack-merge": "^4.2.1"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

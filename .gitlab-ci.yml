@@ -1,0 +1,131 @@
+stages:
+#  - CheckESLint
+- CheckSonar
+- DeployDev
+- DeployStaging
+- DeployProduction
+- DeployTest
+
+#.ESLintScan: &ESLintScan |
+#  pushComment(){
+#      curl --request POST --header "PRIVATE-TOKEN: $USER_TOKEN" \
+#      --form "note=$OUTPUT" --form "path=dudeism.md" \
+#      --form "line=1" --form "line_type=new" \
+#      https://git.hblab.vn/api/v4/projects/$CI_PROJECT_ID/repository/commits/$CI_COMMIT_SHA/comments
+#      echo $OUTPUT
+#      exit 1
+#  }
+#
+#  OUTPUT=$(npm run eslint 2>&1) || pushComment
+
+#ESLint:
+#  stage: CheckESLint
+#  image: node:10.11.0-alpine
+#  script:
+#    - apk add curl
+#    - npm install
+#    - *ESLintScan
+
+.CheckSonarqube: &CheckSonarqube |
+  sonar-scanner -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME -Dsonar.gitlab.project_id=$CI_PROJECT_ID -Dsonar.gitlab.user_token=$USER_TOKEN -Dsonar.login=$SONAR_KEY
+
+Sonar:
+  stage: CheckSonar
+  image: hblabvn/sonar-scanner:latest
+  only:
+  - develop@fe/fe_client
+  script:
+  - *CheckSonarqube
+
+DeployDev:
+  stage: DeployDev
+  image: node:8.14.0-alpine
+  only:
+  - develop@fe/fe_client
+  environment:
+    name: dev
+  script:
+  - apk add rsync && apk add openssh
+  - eval $(ssh-agent -s) && echo "$DEV_DEPLOY_SSH_KEY" | ssh-add -
+  - mkdir -p ~/.ssh
+  - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\tControlMaster auto\n\tControlPath /tmp/ansible-%r@%h:%p\n\tControlPersist 15m\n\tPreferredAuthentications publickey
+\n\n" > ~/.ssh/config'
+  - chmod go-wrx -R ~/.ssh
+  - rm src/js/config/index.js
+  - echo "$DEV_CONFIG_JS" > src/js/config/index.js
+  - npm install && npm run build:dev
+  #    - echo "$MAINTENANCE_HTML" >public/maintenance.html
+  #    - echo "$MAINTENANCE_ENABLE" >public/maintenance.enable
+  - echo "OK" >public/health.html && rsync -azP --exclude='.git*' --exclude=node_modules/ public/ $DEV_DEPLOY_USER@$DEV_DEPLOY_HOST:$DEV_DEPLOY_DIR/
+  # - ssh $DEV_DEPLOY_USER@$DEV_DEPLOY_HOST "cd $DEV_DEPLOY_DIR && eb deploy $DEV_EB_ENV_NAME -l $CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+  - ssh $DEV_DEPLOY_USER@$DEV_DEPLOY_HOST "aws s3 sync $DEV_DEPLOY_DIR/ s3://$DEV_S3_BUCKET/"
+  - ssh $DEV_DEPLOY_USER@$DEV_DEPLOY_HOST "aws cloudfront create-invalidation --distribution-id $DEV_CLOUDFRONT_ID --paths '/*'"
+
+DeployStaging:
+  stage: DeployStaging
+  image: node:8.14.0-alpine
+  only:
+  - staging@fe/fe_client
+  environment:
+    name: staging
+  when: manual
+  script:
+  - apk add rsync && apk add openssh
+  - eval $(ssh-agent -s) && echo "$STG_DEPLOY_SSH_KEY" | ssh-add -
+  - mkdir -p ~/.ssh
+  - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\tControlMaster auto\n\tControlPath /tmp/ansible-%r@%h:%p\n\tControlPersist 15m\n\tPreferredAuthentications publickey
+\n\n" > ~/.ssh/config'
+  - chmod go-wrx -R ~/.ssh
+  - rm src/js/config/index.js
+  - echo "$STG_CONFIG_JS" > src/js/config/index.js
+  - npm install
+  - npm run build:staging
+  - echo "OK" >public/health.html && rsync -azP --exclude='.git*' --exclude=node_modules/ public/ $STG_DEPLOY_USER@$STG_DEPLOY_HOST:$STG_DEPLOY_DIR/
+  - ssh $STG_DEPLOY_USER@$STG_DEPLOY_HOST "aws s3 sync $STG_DEPLOY_DIR/ s3://$STG_S3_BUCKET/"
+  - ssh $STG_DEPLOY_USER@$STG_DEPLOY_HOST "aws cloudfront create-invalidation --distribution-id $STG_CLOUDFRONT_ID --paths '/*'"
+
+DeployProduction:
+  stage: DeployProduction
+  image: node:8.14.0-alpine
+  only:
+  - master@fe/fe_client
+  environment:
+    name: production
+  when: manual
+  script:
+  - apk add rsync && apk add openssh
+  - eval $(ssh-agent -s)
+  - echo "$PROD_DEPLOY_SSH_KEY" | ssh-add -
+  - mkdir -p ~/.ssh
+  - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\tControlMaster auto\n\tControlPath /tmp/ansible-%r@%h:%p\n\tControlPersist 15m\n\tPreferredAuthentications publickey
+\n\n" > ~/.ssh/config'
+  - chmod go-wrx -R ~/.ssh
+  - rm src/js/config/index.js
+  - echo "$PROD_CONFIG_JS" > src/js/config/index.js
+  - npm install
+  - npm run build:production
+  - echo "OK" >public/health.html && rsync -azP --exclude='.git*' --exclude=node_modules/ public/ $PROD_DEPLOY_USER@$PROD_DEPLOY_HOST:$PROD_DEPLOY_DIR/
+  - ssh $PROD_DEPLOY_USER@$PROD_DEPLOY_HOST "aws s3 sync $PROD_DEPLOY_DIR/ s3://$PROD_S3_BUCKET/"
+  - ssh $PROD_DEPLOY_USER@$PROD_DEPLOY_HOST "aws cloudfront create-invalidation --distribution-id $PROD_CLOUDFRONT_ID --paths '/*'"
+
+DeployTest:
+  stage: DeployTest
+  image: node:8.14.0-alpine
+  only:
+  - test@fe/fe_client
+  environment:
+    name: test
+  script:
+  - apk add rsync && apk add openssh
+  - eval $(ssh-agent -s) && echo "$TEST_DEPLOY_SSH_KEY" | ssh-add -
+  - mkdir -p ~/.ssh
+  - 'echo -e "Host *\n\tStrictHostKeyChecking no\n\tControlMaster auto\n\tControlPath /tmp/ansible-%r@%h:%p\n\tControlPersist 15m\n\tPreferredAuthentications publickey
+\n\n" > ~/.ssh/config'
+  - chmod go-wrx -R ~/.ssh
+  - rm src/js/config/index.js
+  - echo "$TEST_CONFIG_JS" > src/js/config/index.js
+  - npm install
+  - npm run build:test
+  - echo "OK" >public/health.html && rsync -azP --exclude='.git*' --exclude=node_modules/ public/ $TEST_DEPLOY_USER@$TEST_DEPLOY_HOST:$TEST_DEPLOY_DIR/
+  - ssh $TEST_DEPLOY_USER@$TEST_DEPLOY_HOST "aws s3 sync $TEST_DEPLOY_DIR/ s3://$TEST_S3_BUCKET/"
+  - ssh $TEST_DEPLOY_USER@$TEST_DEPLOY_HOST "aws cloudfront create-invalidation --distribution-id $TEST_CLOUDFRONT_ID --paths '/*'"

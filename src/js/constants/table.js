@@ -1,0 +1,3 @@
+export const FETCH_LIST_TABLE = 'FETCH_LIST_TABLE';
+export const SELECT_TABLE = 'SELECT_TABLE';
+export const SET_LIST_TABLE = 'SET_LIST_TABLE';
