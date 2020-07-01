@@ -53,8 +53,8 @@ class ListBots extends Component {
   closeModal(isDeleteBot = null) {
     const { data } = this.props;
     let { currentPage } = this.state;
-    if (data.listBots.bots.length === 1 && isDeleteBot === true) {
-      currentPage = 1;
+    if (data.listBots.bots.length === 1 && currentPage !== 1 && isDeleteBot === true) {
+      currentPage -= 1;
     }
     this.setState({
       isShowDetail: false,

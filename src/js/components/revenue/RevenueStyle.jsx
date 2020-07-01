@@ -138,6 +138,7 @@ export const WrapperLineLabel = styled.div`
 `;
 
 export const ScrollPart = styled.div`
+  white-space: normal;
   overflow-x: auto;
   max-width: 100%;
   width: ${props => props.width}%;

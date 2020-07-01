@@ -115,8 +115,9 @@ class Campaign extends Component {
 
   fetchListPattern() {
     const { actions } = this.props;
-    actions.listCampaigns.fetchListLogicPattern(onSuccess, onError);
-    actions.listCampaigns.fetchListBetPattern(onSuccess, onError);
+    const { campaign } = this.state;
+    actions.listCampaigns.fetchListLogicPattern(campaign && campaign._id, onSuccess, onError);
+    actions.listCampaigns.fetchListBetPattern(campaign && campaign._id, onSuccess, onError);
   }
 
   fetchSettingAdmin() {

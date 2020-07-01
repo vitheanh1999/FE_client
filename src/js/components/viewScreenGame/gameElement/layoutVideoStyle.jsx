@@ -69,6 +69,10 @@ export const VideoContainer = styled.div`
   left: 0;
   right: 0;
   box-sizing: content-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000;
 `;
 
 export const BackGroundTurnOffVideo = styled.div`
@@ -109,7 +113,7 @@ export const IconLive = styled.div`
   width: ${props => props.scale * 50}px;
   height: ${props => props.scale * 19}px;
   background-image: url(${images.icLive});
-  top: ${props => props.scale * 17}px;
+  top: ${props => props.scale * 27}px;
   left: ${props => props.scale * 432}px;
   background-size: cover;
   z-index: 10;
@@ -122,7 +126,7 @@ export const NetworkStatus = styled.div`
   display: ${props => (props.showLoading || !props.isTurnOnVideo ? 'none' : 'flex')};
   flex-direction: column;
   text-align: left;
-  top: ${props => props.scale * 18}px;
+  top: ${props => props.scale * 28}px;
   left: ${props => props.scale * 349}px;
   z-index: 10;
   transform: rotate(-90deg);

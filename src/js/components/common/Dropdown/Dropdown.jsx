@@ -193,6 +193,11 @@ export default class Dropdown extends Component {
     this.setState({ currentSelectedId: selectedId });
   }
 
+  // fake validate function
+  validate() {
+    return true;
+  }
+
   renderCurrentItem() {
     const { currentSelectedId } = this.state;
     const {
@@ -213,7 +218,7 @@ export default class Dropdown extends Component {
           }
         </IconWrapper>
         <TextWrapper width={85}>
-          {info.text}
+          {info.nameDisplay}
           <StatusPoint color={info.color} />
         </TextWrapper>
       </CurrentItemWrapper>
@@ -240,7 +245,7 @@ export default class Dropdown extends Component {
           }
         </IconWrapper>
         <TextWrapper width={100}>
-          {info.text}
+          {info.nameDisplay}
           <StatusPoint color={info.color} />
         </TextWrapper>
       </ItemWrapper>

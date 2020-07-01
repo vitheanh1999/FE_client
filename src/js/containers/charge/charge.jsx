@@ -31,6 +31,7 @@ class Charge extends Component {
         total={data.listBots.total}
         lucUserGC={lucUserGC}
         isMobile={isMobile}
+        gift={actions.gift}
       />
     );
   }
@@ -56,6 +57,7 @@ const mapDispatchToProps = dispatch => ({
     fetchPayoutHistory: bindActionCreators(DepositActions.fetchPayoutHistory, dispatch),
     fetchListBots: bindActionCreators(botsActions.fetchListBots, dispatch),
     getGiftHistory: bindActionCreators(DepositActions.getGiftHistory, dispatch),
+    gift: bindActionCreators(DepositActions.gift, dispatch),
   },
 });
 

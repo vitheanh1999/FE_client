@@ -43,8 +43,8 @@ export const AlertStyled = styled.div`
 `;
 
 export const CloseButton = styled.img`
-  height: 0.8em;
-  width: 0.8em !important;
+  height: 1em;
+  width: 1em !important;
   right: 1.3em;
   top: 1.3em;
   cursor: pointer;
@@ -59,7 +59,7 @@ export const Content = styled.div`
   align-items: center;
   flex-direction: column;
   display: flex;
-  padding: ${props => (props.padding ? props.padding : 1.9)}em;
+  padding: ${props => (props.padding ? props.padding : '1.9em')} ;
 `;
 
 export const Title = styled.p`

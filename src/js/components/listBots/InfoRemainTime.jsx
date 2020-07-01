@@ -39,17 +39,15 @@ class InfoRemainTime extends Component {
           <Message>
             {
               !checkRemainTime && !disableButtonSuggest && (
-                (
-                  <ButtonCore
-                    fontSize="0.7em"
-                    color="#2d889c"
-                    hoverBgColor="#20bcdf"
-                    padding="0.2em 0.5em 0.2em 0.5em"
-                    onClick={e => handleUpdateBotStatus(bot, e)}
-                  >
-                    {styleReasonOffBot[keyReason].labelOnBot}
-                  </ButtonCore>
-                )
+              <ButtonCore
+                fontSize="0.7em"
+                color="#2d889c"
+                hoverBgColor="#20bcdf"
+                padding="0.2em 0.5em 0.2em 0.5em"
+                onClick={e => handleUpdateBotStatus(bot, e)}
+              >
+                {styleReasonOffBot[keyReason].labelOnBot}
+              </ButtonCore>
               )
             }
           </Message>

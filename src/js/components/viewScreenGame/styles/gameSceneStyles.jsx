@@ -4,7 +4,7 @@ export const Wrapper = styled.div`
   width: 100%;
   height: ${props => props.height}px;
   flex-direction: column;
-  background-color: #0f3a03;
+  background-color: ${props => (props.isOnBot ? '#0f3a03' : '#333333')};
   background-size: 100% 100%;
   justify-content: center;
   align-items: center;

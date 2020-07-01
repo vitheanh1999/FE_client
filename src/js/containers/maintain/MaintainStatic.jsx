@@ -10,7 +10,6 @@ import i18n from '../../i18n/i18n';
 import images from '../../../assets/images';
 import StorageUtils from '../../helpers/StorageUtils';
 import { socketConnectionDashboard } from '../../components/viewScreenGame/Utils';
-import { FORMAT_DATE } from '../../constants/Constants';
 import ListNewsPublic from '../news/ListNewsPublic';
 import { renderCopyright } from '../../components/menu/TabMenu';
 import { LightningTop, LightningBot } from '../auth/authStyle';

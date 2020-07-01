@@ -5,7 +5,6 @@ import {
   READ_NEW_NOT_LOGIN,
   SET_LIST_NEWS_TOP,
 } from '../constants/news';
-import NewsHelper from '../helpers/NewsHelper';
 import { convertTime } from '../helpers/utils';
 
 const initState = {
@@ -15,8 +14,6 @@ const initState = {
   totalNew: 0,
 };
 
-const newsHelper = new NewsHelper();
-
 const checkNew = (data) => {
   const listNews = (data || []).map((item) => {
     return {
@@ -25,7 +22,6 @@ const checkNew = (data) => {
       summary: item.content_data ? item.content_data[0].summary : '',
     };
   });
-
   return {
     listNews,
   };
@@ -42,56 +38,23 @@ const setListNew = (state, action) => {
 };
 
 const news = (state = initState, action = {}) => {
-  switch (action.type) {
-    case SET_LIST_NEWS: {
-      return setListNew(state, action);
-    }
-
-    case SET_LIST_NEWS_TOP: {
-      return setListNew(state, action);
-    }
-
-    case SET_NEW_DETAIL: {
-      const result = { ...state };
-      result.newDetail = action.data;
-      return result;
-    }
-
-    case READ_NEW: {
-      const result = { ...state };
-      // const { listNews } = result;
-      // for (let i = 0; i < listNews.length; i += 1) {
-      //   if (listNews[i].id === action.newId) {
-      //     listNews[i].hasRead = true;
-      //     newsHelper.addNewDashboardReadId(listNews[i].id, listNews[i].start_plan);
-      //     break;
-      //   }
-      // }
-      // const resultCheck = checkNew(listNews);
-      // result.listNews = resultCheck.listNews;
-      // result.totalNew = resultCheck.totalNew;
-      return result;
-    }
-
-    case READ_NEW_NOT_LOGIN: {
-      const result = { ...state };
-      // const { listNews } = result;
-      // for (let i = 0; i < listNews.length; i += 1) {
-      //   if (listNews[i].id === action.newId) {
-      //     listNews[i].hasRead = true;
-      //     newsHelper.addNewTopReadId(listNews[i].id, listNews[i].start_plan);
-      //     break;
-      //   }
-      // }
-      // const resultCheck = checkNew(listNews);
-      // result.listNews = resultCheck.listNews;
-      // result.totalNew = resultCheck.totalNew;
-      return result;
-    }
-
-    default:
-      return state;
+  const actionType = action.type;
+  if (actionType === SET_LIST_NEWS || actionType === SET_LIST_NEWS_TOP) {
+    return setListNew(state, action);
   }
+
+  if (actionType === SET_NEW_DETAIL) {
+    const result = { ...state };
+    result.newDetail = action.data;
+    return result;
+  }
+
+  if (actionType === READ_NEW || actionType === READ_NEW_NOT_LOGIN) {
+    const result = { ...state };
+    return result;
+  }
+
+  return state;
 };
 
 export default news;

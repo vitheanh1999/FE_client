@@ -58,7 +58,7 @@ export function* updateCampaign(action) {
     const params = {
       ...action.params,
       id: action.params._id
-    }; 
+    };
     const result = yield call(api.create().updateCampaign, params);
     const { data } = result;
     action.onSuccess(data);
@@ -88,7 +88,7 @@ export function* watchDeleteCampaign() {
 
 export function* fetchListLogicPattern(action) {
   try {
-    const result = yield call(api.create().fetchListLogicPattern);
+    const result = yield call(api.create().fetchListLogicPattern, action.campaignId);
     const { data } = result;
     yield put(setListLogicPattern(data.data));
     action.onSuccess(data);
@@ -103,7 +103,7 @@ export function* watchFetchListLogicPattern() {
 
 export function* fetchListBetPattern(action) {
   try {
-    const result = yield call(api.create().fetchListBetPattern);
+    const result = yield call(api.create().fetchListBetPattern, action.campaignId);
     const { data } = result;
     yield put(setListBetPattern(data.data));
     action.onSuccess(data);

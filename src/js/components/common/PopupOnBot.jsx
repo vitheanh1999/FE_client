@@ -140,8 +140,14 @@ class PopupOnBot extends Component {
       isValidGC: true,
       isCheckNotice: false,
       isTableFull: false,
-      clientTableSelect: listTable[0],
-      clientTableDefault: listTable[0],
+      clientTableSelect: listTable[0] || {
+        id: null,
+        name: null,
+      },
+      clientTableDefault: listTable[0] || {
+        id: null,
+        name: null,
+      },
     };
 
     this.timeOutOnBot = null;
@@ -317,8 +323,13 @@ class PopupOnBot extends Component {
             }
           }, 1000);
         },
+        () => {
+          this.setState({
+            isLoading: false,
+          });
+        },
       );
-    }, () => { }, params);
+    }, this.onError, params);
   }
 
   handleChangeState(value, fieldName) {

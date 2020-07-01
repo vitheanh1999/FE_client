@@ -8,15 +8,13 @@ import LightningBody from './LightningBody';
 const WrapperDescribe = styled.div`
   width: 100%;
   position: absolute;
-  top: 50%;
+  top: 70%;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
 const ContentDescribe = styled.div`
-  // display: flex;
-  //justify-content: center;
   margin-top: 1.2em;
   width: 90%;
 `;

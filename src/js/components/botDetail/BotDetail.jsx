@@ -52,12 +52,10 @@ class BotDetail extends Component {
       chartUpdateTime: null,
     };
 
-    this.handleGift = this.handleGift.bind(this);
     this.onError = this.onError.bind(this);
     this.onSuccess = this.onSuccess.bind(this);
     this.onSuccessChangeBotName = this.onSuccessChangeBotName.bind(this);
     this.onSuccessBotHistory = this.onSuccessBotHistory.bind(this);
-    this.onSuccessGift = this.onSuccessGift.bind(this);
     this.fetchUser = this.fetchUser.bind(this);
     this.closeViewMode = this.closeViewMode.bind(this);
     this.onChangePage = this.onChangePage.bind(this);
@@ -177,26 +175,6 @@ class BotDetail extends Component {
     this.setState({ history, isLoading: false });
   }
 
-  onSuccessGift(data) {
-    const { botId } = this.props;
-    this.setState({ isLoading: false });
-    ApiErrorUtils.handleServerError(
-      data,
-      Alert.instance,
-      () => {
-        this.props.fetchListBots(() => { }, this.onError, {
-          sortBy: this.props.sortBy,
-          currentPage: this.props.currentPage,
-          perPage: PER_PAGE,
-        });
-        Alert.instance.hideAlert();
-        this.setState({ isLoading: false });
-        this.props.listBotAction.fetchBotDetail(botId, () => { }, this.onError);
-        Alert.instance.showAlert(i18n.t('success'), data.message);
-      },
-    );
-  }
-
   onChangePage(page) {
     const { history } = this.state;
     if (history.currentPage !== page) {
@@ -249,26 +227,6 @@ class BotDetail extends Component {
     listBotAction.deleteBot(params, this.onSuccessDeleteBot, this.onError);
   }
 
-  handleGift(botId) {
-    Alert.instance.showAlertTwoButtons(
-      i18n.t('warning'),
-      i18n.t('giftMessage'),
-      [i18n.t('cancel'), i18n.t('OK')],
-      [
-        () => Alert.instance.hideAlert(),
-        () => {
-          Alert.instance.hideAlert();
-          this.gift([botId]);
-        },
-      ],
-    );
-  }
-
-  gift(listBotIds) {
-    this.setState({ isLoading: true });
-    this.props.actions.gift(listBotIds, this.onSuccessGift, this.onError);
-  }
-
   openViewMode() {
     this.setState({
       showGameScene: true,
@@ -309,6 +267,7 @@ class BotDetail extends Component {
 
   renderGameScene() {
     const { bot, listBotAction } = this.props;
+    const isOffBot = bot && bot.status === BOT_STATUSES.OFF;
     return (
       <ModalWrapper
         id="modal-view-mode"
@@ -316,10 +275,11 @@ class BotDetail extends Component {
         toggle={() => { }}
         centered
         width={window.innerWidth * 0.8}
+        isOffBot={isOffBot}
       >
-        <ModalHeaderCustom toggle={this.closeViewMode}>
+        <ModalHeaderCustom isOffBot={isOffBot} toggle={this.closeViewMode}>
           {
-            bot && bot.status === BOT_STATUSES.OFF ? i18n.t('checkHistory') : i18n.t('viewMode')
+            isOffBot ? i18n.t('checkHistory') : i18n.t('viewMode')
           }
         </ModalHeaderCustom>
         <GameScene
@@ -435,7 +395,7 @@ class BotDetail extends Component {
           payout={actions.payout}
           fetchListCampaigns={actions.fetchListCampaigns}
           listCampaigns={listCampaigns}
-          gift={this.handleGift}
+          gift={actions.gift}
           handleChangeTab={tab => this.props.handleChangeTab(tab)}
           fontSize={fontSize}
           isMobile={isMobile}

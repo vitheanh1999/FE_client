@@ -6,11 +6,11 @@ import i18n from '../../i18n/i18n';
 import { images } from '../../theme';
 import ChangeBotCampaign from './ChangeBotCampaign';
 import CustomSwitch from '../common/CustomSwitch';
-import PopupPayout from '../common/PopupPayout';
+import PopupHandleGC from '../common/PopupHandleGC';
 import BotDeletePopup from './BotDeletePopup';
 import { BOT_STATUSES, PER_PAGE } from '../../constants/Constants';
 import InputTextField from '../common/InputTextField';
-import ChargeModal from '../charge/ChargeModal';
+import { MAX_GC_CHARGE_ERROR } from '../../constants/Charge';
 import {
   HeaderArea, NameArea, Name,
   Title, DepositInfo, CampaignInfo,
@@ -37,6 +37,8 @@ class BotDetailInfo extends Component {
 
     this.handleChangeBotName = this.handleChangeBotName.bind(this);
     this.handleChangeBotCampaign = this.handleChangeBotCampaign.bind(this);
+    this.handlePayoutGc = this.handlePayoutGc.bind(this);
+    this.handleChargeGc = this.handleChargeGc.bind(this);
     this.openViewModeCharge = this.openViewModeCharge.bind(this);
     this.closeViewModeCharge = this.closeViewModeCharge.bind(this);
     this.openViewModePayout = this.openViewModePayout.bind(this);
@@ -56,6 +58,20 @@ class BotDetailInfo extends Component {
   handleChangeBotCampaign(value) {
     const { bot, updateBotCampaign } = this.props;
     updateBotCampaign(bot.id, value);
+  }
+
+  handlePayoutGc(isHandleAll, amount, onSuccess, onError) {
+    const { bot, payout } = this.props;
+    let params = { botId: bot.id };
+    if (!isHandleAll) {
+      params = { ...params, amount: Number(amount).toFixed(2) };
+    }
+    payout(params, onSuccess, onError);
+  }
+
+  handleChargeGc(isHandleAll, amount, onSuccess, onError) {
+    const { bot, gift } = this.props;
+    gift([bot.id], amount, onSuccess, onError);
   }
 
   openViewModePayout() {
@@ -81,19 +97,54 @@ class BotDetailInfo extends Component {
     } = this.props;
 
     return (
-      <ChargeModal
+      <PopupHandleGC
         isOpen={this.state.isShowModeCharge}
-        closeModalCharge={this.closeViewModeCharge}
-        botName={bot.name}
-        chargeIds={[bot.id]}
-        lucUserGC={lucUserGC}
-        fetchListBots={() => {
+        onClose={this.closeViewModeCharge}
+        onSubmit={this.handleChargeGc}
+        fetchBotData={() => {
           fetchBotDetail(bot.id, () => { }, () => { });
           fetchListBots(() => { }, () => { }, {
             sortBy, currentPage, perPage: PER_PAGE,
           });
           fetchUser();
         }}
+        totalGC={lucUserGC}
+        maxValue={MAX_GC_CHARGE_ERROR}
+        messageConfirm={i18n.t('chargeGcBot')}
+        label={i18n.t('charge')}
+        title={i18n.t('charge1BotNotification')}
+        totalLabel={i18n.t('chargeAvailable')}
+        allGcTitle={i18n.t('chargeAllInput')}
+        amountGcTitle={i18n.t('placeholderChargeGC')}
+        submitTitle={i18n.t('charge')}
+      />
+    );
+  }
+
+  renderPopupPayout() {
+    const {
+      bot, fetchBotDetail, fetchListBots,
+      sortBy, currentPage,
+    } = this.props;
+    return (
+      <PopupHandleGC
+        onClose={this.closeViewModePayout}
+        onSubmit={this.handlePayoutGc}
+        fetchBotData={() => {
+          fetchBotDetail(bot.id, () => { }, () => { });
+          fetchListBots(() => { }, () => { }, {
+            sortBy, currentPage, perPage: PER_PAGE,
+          });
+        }}
+        totalGC={bot.GC}
+        maxValue={bot.GC}
+        messageConfirm={i18n.t('askPayout')}
+        label={i18n.t('warning')}
+        title={i18n.t('payoutTitle')}
+        totalLabel={i18n.t('totalNumberGC')}
+        amountGcTitle={i18n.t('amountGc')}
+        allGcTitle={i18n.t('allGc')}
+        submitTitle={i18n.t('payout')}
       />
     );
   }
@@ -233,12 +284,10 @@ class BotDetailInfo extends Component {
   }
 
   render() {
-    const {
-      bot, listCampaigns,
-      payout, fetchBotDetail,
-    } = this.props;
+    const { bot, listCampaigns } = this.props;
     const isChangeBotCampaign = bot.status === BOT_STATUSES.OFF;
     const campaignBot = bot.campaign || {};
+
     return (
       <WrapperBotInfo>
         <Content>
@@ -261,15 +310,7 @@ class BotDetailInfo extends Component {
           </CampaignAndDepositArea>
         </Content>
         {this.state.isShowModeCharge && this.renderPopupCharge()}
-        {this.state.isShowModePayout && (
-          <PopupPayout
-            bot={bot}
-            payout={payout}
-            onClose={this.closeViewModePayout}
-            fetchBotDetail={fetchBotDetail}
-          />
-        )
-        }
+        {this.state.isShowModePayout && this.renderPopupPayout()}
       </WrapperBotInfo>
     );
   }
@@ -284,6 +325,7 @@ BotDetailInfo.propTypes = {
   updateBotName: PropTypes.func.isRequired,
   updateBotCampaign: PropTypes.func.isRequired,
   payout: PropTypes.func.isRequired,
+  gift: PropTypes.func.isRequired,
   fontSize: PropTypes.number.isRequired,
   isMobile: PropTypes.bool.isRequired,
   fetchListBots: PropTypes.func.isRequired,

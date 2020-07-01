@@ -28,7 +28,7 @@ export const Wrapper = styled(Row)`
 
 export const TitleGroup = styled.span`
   margin-left: 1em;
-  font-size: 1.2em;
+  font-size: 1em;
   font-weight: bold;
   width: ${props => (props.width ? `${props.width}em` : 'unset')};
 `;
@@ -64,7 +64,7 @@ export const HelpWrapper = styled.div`
   padding-top: 0.5em;
   border: 1px solid gray;
   border-radius: 0.5em;
-  width: ${props => (props.isMobile ? '90%' : '60%')};
+  width: ${props => (props.isMobile ? 'unset' : '60%')};
 `;
 
 export const IconHelp = styled.img`

@@ -43,6 +43,14 @@ export const TAB = {
     isShow: true,
     icon: images.iconCampaign,
   },
+  CUSTOM_CAMPAIGN: {
+    name: i18n.t('menu.customCampaign'),
+    key: 'menu.customCampaign',
+    subTitle: '',
+    value: 11,
+    isShow: true,
+    icon: images.iconCustomLogic,
+  },
   CHARGE: {
     name: i18n.t('charge'),
     key: 'charge',

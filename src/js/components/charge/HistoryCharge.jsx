@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropsType from 'prop-types';
 import Pagination from 'rc-pagination';
 import 'rc-pagination/assets/index.css';
+import { isMobile } from 'react-device-detect';
 import {
   WrapperTable, Row, Cell, RowHead, Table, Button, ModalCustom, ModalHeaderCustom, ModalBodyCustom,
 } from './ChargeStyle';
@@ -115,7 +116,7 @@ class HistoryCharge extends Component {
                 <Cell textAlign="right">{item.total_bot}</Cell>
                 <Cell textAlign="end"><SpanCharge>{<StyleNumber value={item.total_GC} color="#fff" afterDot={2} />} GC</SpanCharge></Cell>
                 <Cell textAlign="end"><SpanCharge>{<StyleNumber value={item.after_GC} color="#fff" afterDot={2} />} GC</SpanCharge></Cell>
-                <Cell borderRight="none"><Button onClick={() => this.openModalDetail(item.detail)}>{i18n.t('detail')}</Button></Cell>
+                <Cell borderRight="none"><Button minWidth={1} onClick={() => this.openModalDetail(item.detail)}>{i18n.t('detail')}</Button></Cell>
               </Row>
             ))
           }
@@ -131,7 +132,7 @@ class HistoryCharge extends Component {
     return (
       <React.Fragment>
         <WrapperTable>
-          <Table width="50em">
+          <Table isMobile={isMobile}>
             <tbody>
               <RowHead>
                 <Cell>{i18n.t('date')}</Cell>
@@ -144,9 +145,9 @@ class HistoryCharge extends Component {
             </tbody>
           </Table>
         </WrapperTable>
-        {total > 1
-          && (
-            <WrapperPaginationCustom width={40} scale={fontSize / 18}>
+        <WrapperPaginationCustom height={3} width={40} scale={fontSize / 18}>
+          {total > 1
+            && (
               <Pagination
                 current={currentPage}
                 pageSize={PER_PAGE}
@@ -155,11 +156,10 @@ class HistoryCharge extends Component {
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
-                  marginTop: '1em',
                 }}
               />
-            </WrapperPaginationCustom>
-          )}
+            )}
+        </WrapperPaginationCustom>
         {this.renderDetailModal()}
       </React.Fragment>
     );

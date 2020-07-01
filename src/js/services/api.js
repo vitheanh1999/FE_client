@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { API } from '../config';
 import StorageUtils, { TOKEN_KEY_LUC88 } from '../helpers/StorageUtils';
+import { TABS } from '../components/customCampaign/CardNoTable';
 
 const create = (baseUrl = null) => {
   const api = axios.create({
@@ -87,7 +88,8 @@ const create = (baseUrl = null) => {
   const getListBots = () => generateGet('/deposit');
   const fetchUser = () => generateGet('/users/dashboard-account');
   const connectToLucAccount = params => generatePost('/users/linktoluc', params);
-  const fetchListBots = params => generateGet(`/users/bots?sort_by=${params.sortBy}&page=${params.currentPage}&per_page=${params.perPage}&is_deleted=${params.isDeleted || 0}`);
+  const fetchListBots = params => generateGet(`/users/bots?sort_by=${params.sortBy}&page=${
+    params.currentPage}&per_page=${params.perPage}&is_deleted=${params.isDeleted || 0}`);
   const fetchBurstStatus = () => generateGet('/count-burst-status');
   const fetchPaymentInfo = () => generateGet('/chip/crypto');
   const updateBotStatus = params => generatePost(`bots/${params.botId}/update-status`, params);
@@ -96,7 +98,8 @@ const create = (baseUrl = null) => {
   const getPriceBTC = params => generatePost('/btc-price', params);
   const requestPaying = params => generatePost('/invoice', params);
 
-  const fetchBotHistory = params => generateGet(`bots/${params.botId}/payoff?start_date=${params.startDate}&end_date=${params.endDate}&page=${params.currentPage}&per_page=${params.perPage}`);
+  const fetchBotHistory = params => generateGet(`bots/${params.botId}/payoff?start_date=${params.startDate}&end_date=${
+    params.endDate}&page=${params.currentPage}&per_page=${params.perPage}`);
 
   const fetchPayOffHistory = params => generatePost('bots/payoffs', params);
   const fetchBotHistoryNow = params => generateGet(`bots/${params.botId}/history-betting?page=${params.currentPage}&per_page=${params.perPage}`);
@@ -133,8 +136,8 @@ const create = (baseUrl = null) => {
   const updateBotName = params => generatePost('bots/rename', params);
   const updateBotCampaign = params => generatePut(`bots/${params.botId}/update-campaign?campaign_id=${params.campaignId}`);
 
-  const fetchListBetPattern = () => generateGet('/users/bet-patterns');
-  const fetchListLogicPattern = () => generateGet('/users/logic-patterns');
+  const fetchListBetPattern = campaignId => generateGet(`/users/bet-patterns?campaign_id=${campaignId}`);
+  const fetchListLogicPattern = campaignId => generateGet(`/users/logic-patterns?campaign_id=${campaignId}`);
 
   const fetchListNews = params => generateGet(`/users/news/list?per_page=${params.perPage}&page=${params.currentPage}`);
   const fetchNewDetail = params => generateGet(`/users/news/details?id=${params.id}`);
@@ -143,6 +146,19 @@ const create = (baseUrl = null) => {
 
   const fetchListTable = () => generateGet('/users/list-table');
   const selectTable = params => generatePost('bots/choose-table', params);
+
+  const createOrUpdateLogicPattern = params => generatePost('/users/logic-patterns/update-or-create', params);
+  const deleteLogicPattern = params => generatePost('/users/logic-patterns/delete', params);
+  const fetchListLogicSetting = params => generateGet(`/users/logic-patterns/list-logic-pattern?limit=${params.perPage}&page=${params.currentPage}`);
+  const getDetailLogicPattern = id => generateGet(`/users/logic-patterns/${id}/show`);
+
+  const fetchListBetPatternCustom = params => generateGet(`/users/bet-patterns/list-bet-pattern?limit=${params.perPage}&page=${params.currentPage}`);
+
+  const getSettingWorker = currentTab => generateGet(`/users/${currentTab === TABS.LIST_LOGIC_BET.id ? 'logic-patterns/setting-logic-pattern' : 'bet-patterns/setting-bet-pattern'}`);
+  const getDetailBetPattern = id => generateGet(`/users/bet-patterns/${id}/show`);
+
+  const createOrUpdateBetPattern = params => generatePost('/users/bet-patterns/update-or-create', params);
+  const deleteBetPattern = params => generatePost('/users/bet-patterns/delete', params);
 
   return {
     fetchListTable,
@@ -195,6 +211,15 @@ const create = (baseUrl = null) => {
     updateCampaign,
     deleteBot,
     deleteCampaign,
+    createOrUpdateLogicPattern,
+    deleteLogicPattern,
+    fetchListLogicSetting,
+    getSettingWorker,
+    getDetailLogicPattern,
+    fetchListBetPatternCustom,
+    getDetailBetPattern,
+    createOrUpdateBetPattern,
+    deleteBetPattern,
   };
 };
 

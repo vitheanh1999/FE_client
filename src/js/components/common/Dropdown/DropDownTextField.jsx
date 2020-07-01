@@ -122,6 +122,16 @@ class DropDownTextField extends Component {
     } = this.props;
     const { isShowDropdown, messageError } = this.state;
     const optionList = convertDataOption(listOption, fontSize);
+    const elementMessage = (
+      <Message fontSize="0.7em">
+        <p>{isShowDropdown ? i18n.t('pleaseSaveField') : i18n.t('fieldRequired')}</p>
+      </Message>
+    );
+    const elementMessageError = (
+      <Message fontSize="0.7em">
+        <ErrorTextSelectTable>{messageError}</ErrorTextSelectTable>
+      </Message>
+    );
     return (
       <div>
         <WrapperInput id="SelectTable">
@@ -144,12 +154,7 @@ class DropDownTextField extends Component {
           />
         </WrapperInput>
         {
-          isError ? (<Message fontSize="0.7em"><p>{isShowDropdown ? i18n.t('pleaseSaveField') : i18n.t('fieldRequired')}</p></Message>)
-            : (
-              <Message fontSize="0.7em">
-                <ErrorTextSelectTable>{messageError}</ErrorTextSelectTable>
-              </Message>
-            )
+          isError ? elementMessage : elementMessageError
         }
       </div>
     );

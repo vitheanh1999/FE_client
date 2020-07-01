@@ -19,6 +19,7 @@ import iconNotifyMenu from './imgs/icons/iconNotifyMenu.png';
 import backgroundNewSummry from './imgs/icons/summryNew.png';
 import iconLine from './imgs/icons/iconLine.png';
 import iconColumn from './imgs/icons/iconColumn.png';
+import iconCustomLogic from './imgs/icons/create-logic.png';
 import FEFavicon from './imgs/FEFavicon.jpg';
 
 
@@ -44,6 +45,7 @@ const images = {
   iconNotifyMenu,
   iconLine,
   iconColumn,
+  iconCustomLogic,
   FEFavicon,
 };
 

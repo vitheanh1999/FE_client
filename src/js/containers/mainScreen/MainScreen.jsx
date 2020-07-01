@@ -33,6 +33,7 @@ import MobileMenu from '../../components/menu/MobileMenu';
 import ListNewsAll from '../news/ListNewAll';
 // import { CompanyInfo } from '../../constants/login';
 import i18n from '../../i18n/i18n';
+import CustomCampaign from '../customCampaign/CustomCampaign';
 
 export const calculatorFontSize = () => {
   let screenWidth = window.innerWidth;
@@ -184,6 +185,14 @@ class MainScreen extends BaseContainer {
       case TAB.CAMPAIGN.value:
         tab = (
           <Campaign
+            isMobile={!checkLandscape}
+            fontSize={fontSize}
+          />
+        );
+        break;
+      case TAB.CUSTOM_CAMPAIGN.value:
+        tab = (
+          <CustomCampaign
             isMobile={!checkLandscape}
             fontSize={fontSize}
           />

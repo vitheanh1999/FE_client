@@ -17,14 +17,16 @@ export const fetchListCampaigns = (onSuccess, onError, params) => ({
   params,
 });
 
-export const fetchListLogicPattern = (onSuccess, onError) => ({
+export const fetchListLogicPattern = (campaignId, onSuccess, onError) => ({
   type: FETCH_LIST_LOGIC_PATTERN,
+  campaignId,
   onSuccess,
   onError,
 });
 
-export const fetchListBetPattern = (onSuccess, onError) => ({
+export const fetchListBetPattern = (campaignId, onSuccess, onError) => ({
   type: FETCH_LIST_BET_PATTERN,
+  campaignId,
   onSuccess,
   onError,
 });

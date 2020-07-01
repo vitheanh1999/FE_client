@@ -42,13 +42,18 @@ class ListCampaign extends Component {
   }
 
   onSuccessDelete(data) {
+    const { listCampaigns } = this.props;
+    let { currentPage } = this.state;
     this.setState({ isLoading: false });
     ApiErrorUtils.handleServerError(
       data,
       Alert.instance,
       () => {
         Alert.instance.showAlert(i18n.t('success'), data.message);
-        this.fetchListCampaigns();
+        if (listCampaigns.length === 1 && currentPage !== 1) {
+          currentPage -= 1;
+        }
+        this.setState({ currentPage }, () => this.fetchListCampaigns());
       },
       () => { },
     );

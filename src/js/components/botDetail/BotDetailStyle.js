@@ -48,6 +48,10 @@ export const GcArea = styled.div`
 export const ModalWrapper = styled(Modal)`
   max-width: ${props => props.width && props.width}px;
   min-width: ${props => props.width && props.width}px;
+
+  > div {
+    background-color: ${props => props.isOffBot && '#3333'};
+  }
 `;
 
 export const StyledChartArea = styled(ChartArea)`
@@ -72,6 +76,8 @@ export const Wrapper = styled(JapaneseDiv)`
 `;
 
 export const ModalHeaderCustom = styled(ModalHeader)`
+  background-color: ${props => props.isOffBot && '#00647a'};
+  color: ${props => props.isOffBot && '#fcfcfc'};
   padding: 0.5em;
   font-family:
     "SF Pro JP",
@@ -86,8 +92,13 @@ export const ModalHeaderCustom = styled(ModalHeader)`
     "Arial",
     sans-serif !important;
 
+  > h5 {
+    font-size: 1em;
+  }
+
   button {
     outline: none;
+    color: ${props => props.isOffBot && '#fcfcfc'};
   }
 `;
 

@@ -14,38 +14,44 @@ const TotalRowColor = '#1d1c1c';
 const renderCellData = (data, idsSelected) => (
   <React.Fragment>
     {
-      data.bot_data.map((item, index) => (
-        <Fragment>
-          {idsSelected === -1 && item.showTotal
-            ? (
-              <Cell
-                backgroundColor={TotalRowColor}
-                color={parseFloat(data.payoff) < 0 ? TextRedColor : 'unset'}
-                justifyContent="flex-end"
-              >
-                <StyleNumber
-                  value={item.payoff}
-                  afterDot={2}
-                  color={item.payoff < 0 ? '#ff5a5a' : '#fff'}
-                />
-              </Cell>
-            ) : (
-              <Cell
-                key={item.bot_id}
-                backgroundColor={index % 2 === 0 ? CellOddColor : CellEvenColor}
-                color={parseFloat(item.payoff) < 0 ? TextRedColor : 'unset'}
-                justifyContent="flex-end"
-              >
-                <StyleNumber
-                  value={item.payoff}
-                  afterDot={2}
-                  color={item.payoff < 0 ? '#ff5a5a' : '#fff'}
-                />
-              </Cell>
-            )
-          }
-        </Fragment>
-      ))
+      data.bot_data.map((item, index) => {
+        let elementCellShow = '';
+        if (idsSelected === -1 && item.showTotal) {
+          elementCellShow = (
+            <Cell
+              backgroundColor={TotalRowColor}
+              color={parseFloat(data.payoff) < 0 ? TextRedColor : 'unset'}
+              justifyContent="flex-end"
+            >
+              <StyleNumber
+                value={item.payoff}
+                afterDot={2}
+                color={item.payoff < 0 ? '#ff5a5a' : '#fff'}
+              />
+            </Cell>
+          );
+        } else {
+          elementCellShow = (
+            <Cell
+              key={item.bot_id}
+              backgroundColor={index % 2 === 0 ? CellOddColor : CellEvenColor}
+              color={parseFloat(item.payoff) < 0 ? TextRedColor : 'unset'}
+              justifyContent="flex-end"
+            >
+              <StyleNumber
+                value={item.payoff}
+                afterDot={2}
+                color={item.payoff < 0 ? '#ff5a5a' : '#fff'}
+              />
+            </Cell>
+          );
+        }
+        return (
+          <Fragment>
+            {elementCellShow}
+          </Fragment>
+        );
+      })
     }
   </React.Fragment>
 );

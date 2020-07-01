@@ -83,15 +83,12 @@ export default class TabMenu extends Component {
       notificationNumber,
     } = this.props;
 
-    const scale = window.innerWidth / 1920;
-
     return (
       <Wrapper>
         <DivLeft>
           <TabButton
             isSelected={isSelectLeft}
             onClick={() => this.leftTabOnClick()}
-            scale={scale}
           >
             {textLeft}
           </TabButton>
@@ -100,7 +97,6 @@ export default class TabMenu extends Component {
           <TabButton
             isSelected={!isSelectLeft}
             onClick={() => this.rightTabOnClick()}
-            scale={scale}
           >
             {textRight}
             {

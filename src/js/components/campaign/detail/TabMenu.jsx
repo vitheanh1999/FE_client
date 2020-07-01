@@ -8,7 +8,7 @@ import i18n from '../../../i18n/i18n';
 
 class TabMenu extends PureComponent {
   renderTab(tab) {
-    const { selectTedId, onChangeTab } = this.props;  
+    const { selectTedId, onChangeTab } = this.props;
     return (
       <TabButton
         selected={selectTedId === tab.id}

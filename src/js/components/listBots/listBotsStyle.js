@@ -168,7 +168,9 @@ export const ModalWrapper = styled(Modal)`
   max-width: ${props => props.width}px;
   min-width: ${props => props.width}px;
   margin: auto;
-
+  > div {
+    background-color: ${props => props.isOffBot && '#3333'};
+  }
 `;
 
 export const RightSideGroup = styled.div`
@@ -189,6 +191,13 @@ export const Image = styled.img`
   margin-bottom: 0.35em;
 `;
 
+const styleOpacity = (props) => {
+  if (props.disable) {
+    return 0.25;
+  }
+  return props.opacity ? props.opacity : 1;
+};
+
 export const ButtonCore = styled.div`
   cursor: pointer;
   width: ${props => props.width && props.width};
@@ -197,7 +206,7 @@ export const ButtonCore = styled.div`
   margin: ${props => props.margin && props.margin};
   padding: ${props => props.padding && props.padding};
   background-color: ${props => (props.color && props.color)};
-  opacity: ${props => (props.disable ? 0.25 : (props.opacity ? props.opacity : 1))};
+  opacity: ${props => styleOpacity(props)};
   border-radius: 0.3em;
   color: #fff;
   font-weight: 600;
@@ -242,13 +251,16 @@ export const TextNoMargin = styled.p`
 margin: 0!important;
 color: ${props => (props.isRed ? 'red' : 'black')};
 `;
+
 export const ModalHeaderCustom = styled(ModalHeader)`
+  padding: 0.5em;
+  background-color: ${props => props.isOffBot && '#00647a'};
+  color: ${props => props.isOffBot && '#fcfcfc'};
 
-padding: 0.5em;
-
-button {
-  outline: none;
-}
+  button {
+    outline: none;
+    color: ${props => props.isOffBot && '#fcfcfc'};
+  }
 `;
 
 export const RemoveFormButton = styled.div`

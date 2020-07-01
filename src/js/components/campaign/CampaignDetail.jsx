@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { convertPatternCampaign } from '../../helpers/utils';
 import {
   WrapperDetail, FooterWrapper, ButtonOK,
   ButtonRevert, validCampaign, TABS, getPointRateSetting,
@@ -81,7 +82,15 @@ class CampaignDetail extends Component {
   constructor(props) {
     super(props);
     let { campaignInfo } = this.props;
-
+    if (!campaignInfo.profit_data) {
+      campaignInfo = {
+        ...campaignInfo,
+        profit_data: {
+          max_profit: 0,
+          min_profit: 0,
+        },
+      };
+    }
     const mode = campaignInfo._id ? Mode.Edit : Mode.AddNew;
     let logicBetId = -1;
     try {
@@ -388,6 +397,11 @@ class CampaignDetail extends Component {
       selectedTabId, campaignData, valid,
       isEdited, isLoading, help, settingPointRate,
     } = this.state;
+    const optionLogicPatterns = convertPatternCampaign(listLogicPatterns, campaignData.data.components[0], 'logic_pattern_name');
+    const optionBetPatterns = convertPatternCampaign(listBetPatterns, campaignData.data.components[0], 'bet_pattern_name');
+    let maxWidth = optionLogicPatterns.maxWidth > optionBetPatterns.maxWidth
+      ? optionLogicPatterns.maxWidth : optionBetPatterns.maxWidth;
+    maxWidth = maxWidth / 18 + 4;
     return (
       <WrapperDetail isMobile={isMobile} fontSize={fontSize}>
         <TabMenu
@@ -410,6 +424,9 @@ class CampaignDetail extends Component {
               isMobile={isMobile}
               ref={this.basicTabRef}
               settingPointRate={settingPointRate}
+              optionLogicPatterns={optionLogicPatterns}
+              optionBetPatterns={optionBetPatterns}
+              maxWidth={maxWidth}
             />
           )
         }
@@ -424,6 +441,7 @@ class CampaignDetail extends Component {
               // onChangeCheckSuper6={this.onChangeCheckSuper6}
               // onChangeTypeOptionBanker={this.onChangeTypeOptionBanker}
               onChangeAdvance={this.onChangeAdvance}
+              maxWidth={maxWidth}
             />
           )
         }

@@ -23,7 +23,7 @@ export const TabButton = styled.div`
   cursor: pointer;
   padding-left: 1em;
   padding-right: 1em;
-  width: 8em;
+  min-width: 8em;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -27,7 +27,7 @@ export const Button = styled.div`
   min-height: 'fit-content';
   height: ${props => props.height};
   width: ${props => props.width};
-  min-width: 5em;
+  min-width: ${props => props.minWidth || 5}em;
   color: #fff;
   padding: 0.2em 0;
   text-align: center;
@@ -85,12 +85,8 @@ export const WrapperTitleCharge = styled.div`
 `;
 
 export const WrapperContentCharge = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5em 0;
-  flex-direction: ${props => props.flexDirection};
-  min-height: fit-content;
+  width: 25em;
+  margin-top: 1em;
 `;
 
 export const WrapperBot = styled.div`
@@ -143,21 +139,24 @@ export const Footer = styled.div`
 `;
 
 export const ModalCustom = styled(Modal)`
-  justify-content: center;
   font-size: ${props => props.fontSize}px;
+  max-width: ${props => !props.isMobile && '80%'};
 
-  .modal-content {
-    width: max-content;
+  > div {
+    background-color: #262626;
   }
 `;
 
 export const ModalHeaderCustom = styled(ModalHeader)`
   background-color: #00647a;
-  border-bottom: #00647a;
   color: #fff;
   height: 2.5em;
   padding: 0.5em;
   font-weight: 700;
+
+  > h5 {
+    font-size: 1em;
+  }
 
   > button {
     font-size: 1em;
@@ -167,7 +166,6 @@ export const ModalHeaderCustom = styled(ModalHeader)`
 
 export const ModalBodyCustom = styled(ModalBody)`
   padding: 2em 3em;
-  background-color: rgba(0, 0, 0, 0.85);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -220,16 +218,17 @@ export const InlineDiv = styled.div`
 export const WrapperTable = styled.div`
   background-color: rgb(75, 78, 75);
   min-height: fit-content;
-  height: 33em;
+  height: 33.5em;
   color: #fff;
   padding: 0.1em;
   font-size: 0.8em;
   margin-bottom: 1.5em;
+  width: 100%;
 `;
 
 export const Table = styled.table`
-  width: ${props => props.width};
   white-space: nowrap;
+  width: 100%;
 `;
 
 export const Row = styled.tr`
@@ -253,24 +252,32 @@ export const Cell = styled.td`
   height: 3em;
 `;
 
+export const CellBreak = styled.div`
+  width: ${props => props.isMobile && props.width}em;
+  word-break: break-all;
+  white-space: break-spaces;
+`;
+
 export const WrapperTabMenu = styled.div`
-  width: 100%;
+width: 100%;
 `;
 
 export const WrapperLoading = styled.div`
-  flex: 1;
-  position: absolute;
+flex: 1;
+position: absolute;
 `;
 
-export const Span = styled.span`
-  display: flex;
-  align-items: center;
+export const Span = styled.div`
+display: flex;
+align-items: center;
 `;
 
 export const Img = styled.img`
-  margin-left: 5px;
+margin-left: 5px;
+height: 1em;
+width: 1em;
 `;
 
 export const TitleHead = styled.div`
-  font-size: ${isMobile ? 0.75 :1}em;
+font-size: ${isMobile ? 0.75 : 1}em;
 `;

@@ -10,6 +10,7 @@ import stepAuth from './stepAuth';
 import campaign from './campaign';
 import news from './news';
 import table from './table';
+import customCampaign from './customCampaign';
 
 export default function* root() {
   yield fork(DashBoard);
@@ -23,4 +24,5 @@ export default function* root() {
   yield fork(campaign);
   yield fork(news);
   yield fork(table);
+  yield fork(customCampaign);
 }

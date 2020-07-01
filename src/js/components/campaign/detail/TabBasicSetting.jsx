@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { convertPatternCampaign } from '../../../helpers/utils';
 import i18n from '../../../i18n/i18n';
 import {
   Wrapper, TitleGroup, Row,
@@ -37,16 +36,13 @@ class TabBasicSetting extends Component {
   render() {
     const {
       campaignData, onChangeNameCampaign, onChangePattern,
-      listBetPatterns, listLogicPatterns, valid,
+      optionLogicPatterns, optionBetPatterns, valid,
       helpData, isMobile, onChangeBasic, onClickHelp,
-      settingPointRate,
+      settingPointRate, maxWidth,
     } = this.props;
     const { data, profit_data: profitData } = campaignData;
     const { max_profit: maxProfit, min_profit: minProfit } = profitData;
-    const optionLogicPatterns = convertPatternCampaign(listLogicPatterns, data.components[0], 'logic_pattern_name');
-    const optionBetPatterns = convertPatternCampaign(listBetPatterns, data.components[0], 'bet_pattern_name');
     const pointRate = campaignData.data.point_rate;
-
     return (
       <Wrapper isMobile={isMobile}>
         <Column>
@@ -62,15 +58,16 @@ class TabBasicSetting extends Component {
               maxLength={20}
               labelPaddingBottom={4}
               value={campaignData.name}
+              width={maxWidth}
             />
             {this.creatButtonHelp('name', 'help.name', '', '')}
           </Row>
           <Blank height={1} />
           <Row>
-            <TitleGroup width={9}>{i18n.t('logicPattern')}</TitleGroup>
-            {optionLogicPatterns.length > 0 ? (
+            <TitleGroup width={8}>{i18n.t('logicPattern')}</TitleGroup>
+            {optionLogicPatterns.patternOption.length > 0 ? (
               <Dropdown
-                data={optionLogicPatterns}
+                data={optionLogicPatterns.patternOption}
                 onChangeSelected={(id, infos) => {
                   onChangePattern(infos, 'logic_pattern_id', 'logic_pattern_name', 'logic_pattern_description');
                   onClickHelp(
@@ -83,6 +80,7 @@ class TabBasicSetting extends Component {
                 }}
                 defaultSelectedId={data.components[0].logic_pattern_id}
                 ref={this.logicRef}
+                width={maxWidth}
                 ignoreWhenReselect
               />
             ) : ''
@@ -93,16 +91,17 @@ class TabBasicSetting extends Component {
                 'help.logicBet',
                 data.components[0].logic_pattern_name,
                 `help.logicBet.${data.components[0].logic_pattern_id}`,
-                searchDescription(data.components[0].logic_pattern_id, optionLogicPatterns),
+                searchDescription(data.components[0].logic_pattern_id,
+                  optionLogicPatterns.patternOption),
               )
             }
           </Row>
           <Blank height={1} />
           <Row>
-            <TitleGroup width={9}>{i18n.t('betPattern')}</TitleGroup>
-            {optionBetPatterns.length > 0 ? (
+            <TitleGroup width={8}>{i18n.t('betPattern')}</TitleGroup>
+            {optionBetPatterns.patternOption.length > 0 ? (
               <Dropdown
-                data={optionBetPatterns}
+                data={optionBetPatterns.patternOption}
                 onChangeSelected={(id, infos) => {
                   onChangePattern(infos, 'bet_pattern_id', 'bet_pattern_name', 'bet_pattern_description');
                   onClickHelp(
@@ -115,6 +114,7 @@ class TabBasicSetting extends Component {
                 }}
                 defaultSelectedId={data.components[0].bet_pattern_id}
                 ref={this.betRef}
+                width={maxWidth}
                 ignoreWhenReselect
               />
             ) : ''
@@ -125,14 +125,15 @@ class TabBasicSetting extends Component {
                 'help.betPattern',
                 data.components[0].bet_pattern_name,
                 `help.betPattern.${data.components[0].bet_pattern_id}`,
-                searchDescription(data.components[0].bet_pattern_id, optionBetPatterns),
+                searchDescription(data.components[0].bet_pattern_id,
+                  optionBetPatterns.patternOption),
               )
             }
           </Row>
           <Blank height={1} />
           <TitleGroup>{i18n.t('profit')}</TitleGroup>
           <Row>
-            <TitleField width={8.7}>{i18n.t('maxProfit')}</TitleField>
+            <TitleField width={7}>{i18n.t('maxProfit')}</TitleField>
             <FormCampaign
               onChange={e => onChangeBasic(e, 'max_profit')}
               isValid={valid.max_profit.isValid}
@@ -141,12 +142,13 @@ class TabBasicSetting extends Component {
               name="maxProfit"
               labelPaddingBottom={4}
               value={maxProfit.toString()}
+              width={maxWidth}
             />
             {this.creatButtonHelp('maxProfit', 'help.maxProfit', '', '')}
           </Row>
           <Blank height={0.5} />
           <Row>
-            <TitleField width={8.7}>{i18n.t('minProfit')}</TitleField>
+            <TitleField width={7}>{i18n.t('minProfit')}</TitleField>
             <FormCampaign
               onChange={e => onChangeBasic(e, 'min_profit')}
               isValid={valid.min_profit.isValid}
@@ -155,6 +157,7 @@ class TabBasicSetting extends Component {
               name="minProfit"
               labelPaddingBottom={4}
               value={minProfit.toString()}
+              width={maxWidth}
             />
             {this.creatButtonHelp('minProfit', 'help.minProfit', '', '')}
           </Row>
@@ -171,6 +174,7 @@ class TabBasicSetting extends Component {
               labelPaddingBottom={4}
               value={pointRate && pointRate.toString()}
               inputText={'Max: '.concat(settingPointRate.max)}
+              width={maxWidth}
             />
             {this.creatButtonHelp('pointRate', 'help.pointRate', '', '')}
           </Row>
@@ -180,7 +184,7 @@ class TabBasicSetting extends Component {
             <FormCampaign
               name="pointRateGC"
               labelPaddingBottom={4}
-              width={13}
+              width={maxWidth - 3}
               value={pointRate && (pointRate * 10).toString().concat('GC')}
               disabled
             />
@@ -210,11 +214,12 @@ TabBasicSetting.propTypes = {
   helpData: PropTypes.objectOf(PropTypes.any),
   onClickHelp: PropTypes.func,
   onChangePattern: PropTypes.func.isRequired,
-  listBetPatterns: PropTypes.array.isRequired,
-  listLogicPatterns: PropTypes.array.isRequired,
+  optionLogicPatterns: PropTypes.objectOf(PropTypes.any).isRequired,
+  optionBetPatterns: PropTypes.objectOf(PropTypes.any).isRequired,
   onChangeBasic: PropTypes.func.isRequired,
   valid: PropTypes.objectOf(PropTypes.any).isRequired,
   settingPointRate: PropTypes.objectOf(PropTypes.any).isRequired,
+  maxWidth: PropTypes.number.isRequired,
 };
 
 export default TabBasicSetting;

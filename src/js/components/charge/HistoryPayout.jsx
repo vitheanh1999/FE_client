@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import PropsType from 'prop-types';
 import Pagination from 'rc-pagination';
+import { isMobile } from 'react-device-detect';
 import {
   WrapperTable, Row, Cell,
-  RowHead, Table,
+  RowHead, Table, CellBreak,
 } from './ChargeStyle';
 import { WrapperPaginationCustom, fontSize, SpanCharge } from '../common/CommonStyle';
 import i18n from '../../i18n/i18n';
@@ -58,8 +59,8 @@ class HistoryPayout extends Component {
               const itemName = item.is_deleted ? item.bot_id + i18n.t('botNameDeleted') : item.name;
               return (
                 <Row backgroundColor={id % 2 === 0 ? '#555' : '#333'} key={item.id}>
-                  <Cell textAlign="left">{item.date}</Cell>
-                  <Cell textAlign="left">{itemName}</Cell>
+                  <Cell textAlign="left"><CellBreak width={6.5} isMobile={isMobile}>{item.date}</CellBreak></Cell>
+                  <Cell textAlign="left"><CellBreak width={10} isMobile={isMobile}>{itemName}</CellBreak></Cell>
                   <Cell textAlign="left">{i18n.t('payoutManually')}</Cell>
                   <Cell textAlign="right"><SpanCharge>{<StyleNumber value={item.payout} color="#fff" afterDot={2} />} GC</SpanCharge></Cell>
                   <Cell textAlign="right"><SpanCharge>{<StyleNumber value={item.gc_main_account} color="#fff" afterDot={2} />} GC</SpanCharge></Cell>
@@ -79,16 +80,16 @@ class HistoryPayout extends Component {
     return (
       <React.Fragment>
         <WrapperTable>
-          <Table width="50em">
+          <Table isMobile={isMobile}>
             <tbody>
               {renderHeader()}
               {this.renderContent()}
             </tbody>
           </Table>
         </WrapperTable>
-        {total > 1
-          && (
-            <WrapperPaginationCustom width={40} scale={fontSize / 18}>
+        <WrapperPaginationCustom height={3} width={40} scale={fontSize / 18}>
+          {total > 1
+            && (
               <Pagination
                 current={currentPage}
                 pageSize={PER_PAGE}
@@ -97,11 +98,10 @@ class HistoryPayout extends Component {
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
-                  marginTop: '1em',
                 }}
               />
-            </WrapperPaginationCustom>
-          )}
+            )}
+        </WrapperPaginationCustom>
       </React.Fragment>
     );
   }

@@ -110,7 +110,7 @@ export const SwitchOnOffVideo = styled.div`
   display: ${props => (props.showLoading ? 'none' : 'flex')};
   justify-content: center;
   align-items: center;
-  top: ${props => props.scale * 18}px;
+  top: ${props => props.scale * 28}px;
   left: ${props => (props.isTurnOnVideo ? (props.scale * 372) : (props.scale * 414))}px;
   z-index: 10;
 `;
@@ -210,12 +210,12 @@ export default class LayoutVideo extends Component {
     if (isMobile) {
       canvasObj.style.width = '100%';
       if (window.orientation === 90 || window.orientation === -90) {
-        canvasObj.style.width = `${490 * scale}px`;
-        canvasObj.style.height = `${scale * 401}px`;
+        canvasObj.style.width = `${489.5 * scale}px`;
+        canvasObj.style.height = `${scale * 367.5}px`;
       }
     } else {
-      canvasObj.style.width = `${490 * scale}px`;
-      canvasObj.style.height = `${scale * 401}px`;
+      canvasObj.style.width = `${489.5 * scale}px`;
+      canvasObj.style.height = `${scale * 367.5}px`;
     }
     canvasObj.id = 'myCanvas';
     const { currentVideoScale } = this.state;
@@ -244,7 +244,7 @@ export default class LayoutVideo extends Component {
       reuseMemory: true,
       useWorker: true,
       webgl: 'auto',
-      size: { width: 490, height: 410 },
+      size: { width: 489.5, height: 410 },
     };
 
     this.setState({
@@ -405,8 +405,8 @@ export default class LayoutVideo extends Component {
     const isShowHistory = false;
     const scale = width / 1060;
     if (canvasObj) {
-      canvasObj.style.width = `${490 * scale}px`;
-      canvasObj.style.height = `${scale * 401}px`;
+      canvasObj.style.width = `${489.5 * scale}px`;
+      canvasObj.style.height = `${scale * 367.5}px`;
     }
     const loadingAnim = showLoading ? <LoadingAnimation id="LoadingAnimation" scale={scale}>Loading ...</LoadingAnimation> : null;
     const loadingLogo = showLoading ? <LoadingLogo id="LoadingLogo" scale={scale} /> : null;

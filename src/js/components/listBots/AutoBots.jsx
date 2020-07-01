@@ -169,6 +169,7 @@ class AutoBots extends Component {
   renderGameScene() {
     const { selectedBotInfo } = this.state;
     const { fetchBotHistoryNow, listBotAction, updateNameTable } = this.props;
+    const isOffBot = selectedBotInfo && selectedBotInfo.status === BOT_STATUSES.OFF;
 
     return (
       <ModalWrapper
@@ -177,10 +178,11 @@ class AutoBots extends Component {
         toggle={() => { }}
         centered
         width={window.innerWidth * 0.8}
+        isOffBot={isOffBot}
       >
-        <ModalHeaderCustom toggle={this.closeViewMode}>
+        <ModalHeaderCustom isOffBot={isOffBot} toggle={this.closeViewMode}>
           {
-            selectedBotInfo && selectedBotInfo.status === BOT_STATUSES.OFF ? i18n.t('checkHistory') : i18n.t('viewMode')
+            isOffBot ? i18n.t('checkHistory') : i18n.t('viewMode')
           }
         </ModalHeaderCustom>
         <GameScene

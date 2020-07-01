@@ -9,6 +9,15 @@ import {
   SET_DATA_CHARTS,
 } from '../constants/ListBots';
 
+const customRoundNumber = (number, afterDot = 2, delta = 0.001) => {
+  const ratio = 10 ** afterDot;
+  const mul = number * ratio;
+  const truncNum = Math.trunc(mul);
+  const ceil = truncNum + 1;
+  if ((ceil - mul) < delta) return ceil / ratio;
+  return truncNum / ratio;
+};
+
 const initState = {
   total: 0,
   lucUserGC: 0,
@@ -30,7 +39,7 @@ const listBots = (state = initState, action = {}) => {
       const result = { ...state };
       result.total = action.data.total;
       result.bots = action.data.data;
-      result.lucUserGC = Math.trunc(action.data.user_gc * 100) / 100;
+      result.lucUserGC = customRoundNumber(action.data.user_gc, 2);
       result.timeUpdateListBot = new Date();
       return result;
     }

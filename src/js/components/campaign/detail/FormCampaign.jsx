@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import Form from '../../common/Form';
 
 const WrapperInput = styled.div`
-  font-size: 0.9em;
+  font-size: 1em;
   font-family: Arial, sans-serif;
-  border-radius: 0.278em;
+  border-radius: 0.13334em;
   background-color: #efefef;
   display: flex;
   align-items: center;
@@ -18,18 +18,18 @@ const WrapperInput = styled.div`
 const Input = styled.input`
   border: none;
   min-height: 1.4em;
-  height: 2.38em;
+  height: 2em;
   padding: 0.278em;
-  border-radius: 0.278em;
+  border-radius: 0.13334em;
   width: ${props => (props.inputText ? 60 : 100)}%;
-  background-color: ${props => (props.disabled ? '#ccc;' : '##efefef;')};
+  background-color: ${props => (props.disabled ? '#ccc' : '#efefef')};
 `;
 
 const InputText = styled.div`
   padding: 0 0.5em 0 0.5em;
   background-color: #dee2e6;
   min-height: 1.4em;
-  height: 2.38em;
+  height: 2em;
   display: flex;
   align-items: center;
   border-radius: 0 0.278em 0.278em 0;
@@ -72,6 +72,7 @@ export default class FormCampaign extends Form {
           autoFocus={autoFocus}
           placeholder={placeholder}
           inputText={inputText}
+          multiline
         />
         {inputText && (<InputText><span>{inputText}</span></InputText>)}
       </WrapperInput>

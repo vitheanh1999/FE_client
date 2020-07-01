@@ -23,10 +23,9 @@ export const WrapperTop = styled.div`
 
 const Body = styled.div`
   position: ${props => (props.locationBottom ? '' : 'absolute')};
-  top: 0;
+  top: 20%;
   left: 0;
   right: 0;
-  bottom: 35%;
   display: flex;
   justify-content: center;
   align-items: center;

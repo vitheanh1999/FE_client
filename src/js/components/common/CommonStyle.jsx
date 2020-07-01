@@ -40,7 +40,7 @@ export const ContentHeader = styled.div`
   width: 100%;
   padding: 0 1em;
   font-weight: bold;
-  font-size: 120%;
+  font-size: 110%;
   min-height: 2.75em;
   background-color: #333;
   color: #fff;
@@ -117,6 +117,7 @@ export const ButtonStatus = styled.div`
 export const WrapperPaginationCustom = styled.div`
   transform: scale(${props => (props.scale)});
   width: ${props => props.width}em;
+  height: ${props => props.height}em;
 
   li {
     background-color: #fff;
@@ -185,6 +186,14 @@ export const ModalWrapper = styled(Modal)`
 `;
 
 export const ModalHeaderCustom = styled(ModalHeader)`
+  height: 2.5em;
+  font-weight: 700;
+  padding: 0.5em;
+
+  > h5 {
+    font-size: 1em;
+  }
+
   button {
     color: #fcfcfc;
   }

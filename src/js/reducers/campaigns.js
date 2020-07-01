@@ -28,7 +28,7 @@ const Campaigns = (state = initState, action = {}) => {
 
     case SET_LIST_LOGIC_PATTERN: {
       const result = { ...state };
-      result.listLogicPatterns = action.data; 
+      result.listLogicPatterns = action.data;
       return result;
     }
 

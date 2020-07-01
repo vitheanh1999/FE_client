@@ -11,7 +11,7 @@ import {
 import {
   WrapperListItem, ListInformation,
 } from '../common/CommonStyle';
-import DeleleCampaignPopup from './detail/DeleleCampaignPopup';
+import DeleteCampaignPopup from './detail/DeleteCampaignPopup';
 
 const ENABLE_DELETE_CAMPAIGN = true;
 
@@ -26,7 +26,7 @@ class CampaignItemList extends PureComponent {
   renderAction() {
     const { campaignInfo, onClickDetail, handleDelete } = this.props;
     const buttonDelete = ENABLE_DELETE_CAMPAIGN && (
-      <DeleleCampaignPopup
+      <DeleteCampaignPopup
         handleDelete={handleDelete}
         campaignInfo={campaignInfo}
       />
@@ -56,7 +56,7 @@ class CampaignItemList extends PureComponent {
     const { campaignInfo } = this.props;
 
     return (
-      <WrapperListItem>
+      <WrapperListItem >
         <ListInformation>
           <Title>{campaignInfo.name}</Title>
           {

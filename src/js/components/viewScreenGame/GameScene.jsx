@@ -28,10 +28,10 @@ const getCurrentTableName = botInfo => {
     nameOfTable = botInfo.table_name;
   } else {
     nameOfTable = botInfo && listGroupChangeTable &&
-    (
-      Object.keys(listGroupChangeTable).includes(botInfo.group_id.toString())
-        ? listGroupChangeTable[botInfo.group_id] : botInfo.table_name
-    );
+      (
+        Object.keys(listGroupChangeTable).includes(botInfo.group_id.toString())
+          ? listGroupChangeTable[botInfo.group_id] : botInfo.table_name
+      );
   }
   return nameOfTable || 'C001';
 }
@@ -131,7 +131,7 @@ class GameScene extends SuperGameScene {
   onSuccessFetchTableStatus(data) {
     const { botIsBetting } = this.state;
     this.setState({ tableStatus: data.data });
-    
+
     if (data.data.table_is_pause || data.data.table_shuffling || !data.data.table_status || (botIsBetting === false)) {
       this.woodPlaneRef.current.showNotiWaitBet();
     } else {
@@ -153,12 +153,12 @@ class GameScene extends SuperGameScene {
           this.layoutVideoRef.current.pauseTableToUpdateLobby();
           const { tableStatus } = this.state;
           tableStatus.table_is_pause = true;
-          this.setState({tableStatus})
+          this.setState({ tableStatus })
         } else {
           this.layoutVideoRef.current.resumeTable();
           const { tableStatus } = this.state;
           tableStatus.table_is_pause = false;
-          this.setState({tableStatus})
+          this.setState({ tableStatus })
           this.props.fetchTableStatusNow(this.props.botInfo.id, this.onSuccessFetchTableStatus, this.onErrorFetchTableStatus);
         }
       }
@@ -175,9 +175,9 @@ class GameScene extends SuperGameScene {
         } else {
           this.props.fetchTableStatusNow(this.props.botInfo.id, this.onSuccessFetchTableStatus, this.onErrorFetchTableStatus);
         }
-          const { tableStatus } = this.state;
-          tableStatus.table_status = event.table.status;
-          this.setState({tableStatus});
+        const { tableStatus } = this.state;
+        tableStatus.table_status = event.table.status;
+        this.setState({ tableStatus });
       }
     });
   }
@@ -257,8 +257,8 @@ class GameScene extends SuperGameScene {
         this.woodPlaneRef.current.showNotiWaitBet();
         this.woodPlaneRef.current.shuffling();
         const { tableStatus } = this.state;
-          tableStatus.table_shuffling = true;
-          this.setState({tableStatus});
+        tableStatus.table_shuffling = true;
+        this.setState({ tableStatus });
       }
     });
   }
@@ -281,10 +281,10 @@ class GameScene extends SuperGameScene {
 
   updateIsBetting(isBetting) {
     const { tableStatus } = this.state;
-    this.setState({ botIsBetting: isBetting})
-    
-    if( Object.keys(tableStatus).length === 0) {
-      if(isBetting === false) {
+    this.setState({ botIsBetting: isBetting })
+
+    if (Object.keys(tableStatus).length === 0) {
+      if (isBetting === false) {
         this.woodPlaneRef.current.showNotiWaitBet();
       }
       return;
@@ -420,7 +420,11 @@ class GameScene extends SuperGameScene {
     const { totalBet, nameTable } = this.state;
     return (
       <React.Fragment>
-        <BackgroundBetting width={width} height={height} images={images.BackgroundSpritev2} />
+        <BackgroundBetting
+          isOnBot={botInfo.status}
+          width={width}
+          height={height}
+        />
         <MainTable
           ref={this.mainTableRef}
           totalBet={totalBet}
@@ -454,7 +458,12 @@ class GameScene extends SuperGameScene {
     const { botInfo, width } = this.props;
     const height = width / ratioWH;
     return (
-      <Wrapper width={width} height={height} id="GameCanvas">
+      <Wrapper
+        isOnBot={botInfo.status}
+        width={width}
+        height={height}
+        id="GameCanvas"
+      >
         {botInfo.status ? this.renderFullViewMode() : this.renderHistoryOnly()}
       </Wrapper>
     );

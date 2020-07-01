@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { setInterval, clearInterval } from 'timers';
-import { convertNumber } from '../Utils';
 import StyleNumber from '../../StyleNumber';
 
 const TextWrapper = styled.div`

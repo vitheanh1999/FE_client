@@ -39,7 +39,8 @@ class TabAdvanceSetting extends Component {
   render() {
     const {
       campaignData, onChangeAdvance,
-      valid, helpData, isMobile, onClickHelp,
+      valid, helpData, isMobile,
+      onClickHelp, maxWidth,
     } = this.props;
     const {
       nearest_turns: nearestTurns,
@@ -53,7 +54,7 @@ class TabAdvanceSetting extends Component {
           <Blank height={0.5} />
           <TitleGroup>{i18n.t('zeroBet')}</TitleGroup>
           <Row>
-            <TitleField width={8}>{i18n.t('nearestTurns')}</TitleField>
+            <TitleField width={7}>{i18n.t('nearestTurns')}</TitleField>
             <FormCampaign
               onChange={e => onChangeAdvance(e, 'nearest_turns')}
               isValid={valid.nearest_turns.isValid}
@@ -63,12 +64,13 @@ class TabAdvanceSetting extends Component {
               pattern="[0-9]*"
               labelPaddingBottom={4}
               value={nearestTurns && nearestTurns.toString()}
+              width={maxWidth}
             />
             {this.creatButtonHelp('nearestTurns', 'help.nearestTurn', '', '')}
           </Row>
           <Blank height={0.5} />
           <Row>
-            <TitleField width={8}>{i18n.t('winRate')}</TitleField>
+            <TitleField width={7}>{i18n.t('winRate')}</TitleField>
             <FormCampaign
               onChange={e => onChangeAdvance(e, 'win_rate_value')}
               isValid={valid.win_rate_value.isValid}
@@ -78,17 +80,17 @@ class TabAdvanceSetting extends Component {
               pattern="[0-9]*"
               labelPaddingBottom={4}
               value={winRate && winRate.toString()}
+              width={maxWidth}
             />
             {this.creatButtonHelp('winRate', 'help.winRate', '', '')}
           </Row>
           <Blank height={0.5} />
           <Row>
-            <TitleField width={8}>{i18n.t('mode')}</TitleField>
+            <TitleField width={7}>{i18n.t('mode')}</TitleField>
             <Dropdown
               data={OPTIONS_MODE}
               defaultSelectedId={zeroModeId}
               ignoreWhenReselect
-              width={15.3}
               onChangeSelected={(id) => {
                 const event = {
                   target: {
@@ -99,12 +101,13 @@ class TabAdvanceSetting extends Component {
                 onChangeAdvance(event, 'zero_bet_mode');
                 onClickHelp(`mode_${id}`, `help.zeroMode${id}`, '', '');
               }}
+              width={maxWidth}
             />
             {this.creatButtonHelp(`mode_${zeroModeId}`, `help.zeroMode${zeroModeId}`, '', '')}
           </Row>
           <Blank height={1} />
           <Row>
-            <TitleGroup width={7.28}>{i18n.t('look')}</TitleGroup>
+            <TitleGroup width={8}>{i18n.t('look')}</TitleGroup>
             <FormCampaign
               onChange={e => onChangeAdvance(e, 'look_rate_value')}
               isValid={valid.look_rate_value.isValid}
@@ -114,6 +117,7 @@ class TabAdvanceSetting extends Component {
               pattern="[0-9]*"
               labelPaddingBottom={4}
               value={campaignData.data.components[0].look_rate_value.toString()}
+              width={maxWidth}
             />
             {this.creatButtonHelp('look', 'help.look', '', '')}
           </Row>
@@ -142,6 +146,7 @@ TabAdvanceSetting.propTypes = {
   onClickHelp: PropTypes.func,
   onChangeAdvance: PropTypes.func.isRequired,
   valid: PropTypes.objectOf(PropTypes.any).isRequired,
+  maxWidth: PropTypes.number.isRequired,
 };
 
 export default TabAdvanceSetting;

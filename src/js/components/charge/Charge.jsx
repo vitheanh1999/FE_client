@@ -91,14 +91,18 @@ class Charge extends Component {
 
   renderHistoryModal() {
     const { isOpenHistoryModal } = this.state;
-    const { fontSize, fetchPayoutHistory, getGiftHistory } = this.props;
+    const {
+      fontSize, fetchPayoutHistory,
+      getGiftHistory, isMobile,
+    } = this.props;
     return (
       <ModalCustom
-        id="modal"
+        id="modal-view-mode"
         centered
         isOpen={isOpenHistoryModal}
         scale={scale || 1}
         fontSize={fontSize / 1.25}
+        isMobile={isMobile}
       >
         <ModalHeaderCustom toggle={this.closeHistoryModal}>
           {i18n.t('history')}
@@ -113,7 +117,8 @@ class Charge extends Component {
 
   render() {
     const {
-      listBots, total, lucUserGC, isMobile,
+      listBots, total, lucUserGC,
+      isMobile, gift,
     } = this.props;
     const listBotOff = [];
     if (listBots.length !== 0) {
@@ -143,6 +148,7 @@ class Charge extends Component {
             total={total}
             onChangePage={this.onChangePage}
             isMobile={isMobile}
+            gift={gift}
           />
         </ContentBody>
         {this.renderHistoryModal()}
@@ -167,6 +173,7 @@ Charge.propTypes = {
   total: PropsType.number,
   lucUserGC: PropsType.number,
   isMobile: PropsType.bool.isRequired,
+  gift: PropsType.func.isRequired,
 };
 
 export default Charge;

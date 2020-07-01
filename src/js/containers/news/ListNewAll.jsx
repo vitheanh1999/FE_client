@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { ModalBody } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { convertListNews } from '../../helpers/utils';
 import ApiErrorUtils from '../../helpers/ApiErrorUtils';
 import Spinner from '../../components/common/Spinner';
 import Alert from '../../components/common/Alert/Alert';

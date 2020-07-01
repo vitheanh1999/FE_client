@@ -81,10 +81,10 @@ export const getBrowserLanguageCode = () => {
       case 'th':
         return `${prefix}/`;
       default:
-      {
-        if (userLang.includes('zh-cn')) return 'zh-cn/';
-        return '';
-      }
+        {
+          if (userLang.includes('zh-cn')) return 'zh-cn/';
+          return '';
+        }
     }
   } catch (e) {
     return '';
@@ -149,12 +149,21 @@ export const getCurrentBaseUrl = () => {
 };
 
 export const convertPatternCampaign = (listPatterns, pattern, fieldName) => {
+  let maxWidth = 270;
+  const elementDocument = document.createElement('canvas');
+  const context = elementDocument.getContext('2d');
+  context.font = '18px Arial';
+
   const patternOption = [];
   listPatterns.forEach((element) => {
     if (
       element.status_fe
       || (pattern[fieldName] === element[fieldName])
     ) {
+      const text = context.measureText(element[fieldName]);
+      if (text.width > maxWidth) {
+        maxWidth = text.width;
+      }
       patternOption.push({
         id: element.id,
         value: element.id,
@@ -163,7 +172,7 @@ export const convertPatternCampaign = (listPatterns, pattern, fieldName) => {
       });
     }
   });
-  return patternOption;
+  return { maxWidth, patternOption };
 };
 
 export const convertCampaignOption = (data, maxWidth) => {
