@@ -330,6 +330,7 @@ class PopupOnBot extends Component {
         },
       );
     }, this.onError, params);
+    console.log('clientTableSelect ', this.state.clientTableSelect);
   }
 
   handleChangeState(value, fieldName) {

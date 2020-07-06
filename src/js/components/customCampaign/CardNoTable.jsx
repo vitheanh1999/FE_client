@@ -15,18 +15,18 @@ export const TABS = {
 
 export const OPTIONS_BET = [
   {
-    text: 'B',
-    nameDisplay: 'BANKER',
+    text: 'BANKER',
+    value: 'B',
     id: 1,
   },
   {
-    text: 'P',
-    nameDisplay: 'PlAYER',
+    text: 'PLAYER',
+    value: 'P',
     id: 2,
   },
   {
     text: 'LOOK',
-    nameDisplay: 'LOOK',
+    value: 'LOOK',
     id: 3,
   },
 ];
@@ -39,6 +39,7 @@ const TH = styled.th`
   :first-child {
     width: 16%;
   }
+
   :nth-child(2) {
     width: 40%;
   }
@@ -137,9 +138,9 @@ class CardNoTable extends Component {
                     <Dropdown
                       data={OPTIONS_BET}
                       onChangeSelected={(id, info) => {
-                        onChangeValueColumn(info.text, index, field);
+                        onChangeValueColumn(info.value, index, field);
                       }}
-                      defaultSelectedId={OPTIONS_BET[OPTIONS_BET.findIndex(option => option.text === item.bet_value)].id}
+                      defaultSelectedId={OPTIONS_BET[OPTIONS_BET.findIndex(option => option.value === item.bet_value)].id}
                       width={12}
                       ref={this.refPool.getOrCreatRef(`${index}-${i}`)}
                     />
@@ -207,12 +208,12 @@ class CardNoTable extends Component {
         </Table>
         {
           cardNoData.length < settingWorkerData.max_card_no && (
-            <div style={{ alignSelf: 'center' }}>
+            <div style={{ alignSelf: 'center', }}>
               <WrapperAddNewColumn
                 onClick={() => addNewColumnData()}
               >
                 <IconAdd
-                  style={{ marginRight: 0 }}
+                  style={{ marginRight: 0, }}
                   src={images.add}
                 />
               </WrapperAddNewColumn>

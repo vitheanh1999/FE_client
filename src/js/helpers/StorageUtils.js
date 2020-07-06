@@ -20,6 +20,7 @@ export const STORAGE_KEYS = {
   AUTH_SECURITY_REMEMBER_KEY: 'AUTH_SECURITY_REMEMBER_KEY',
   USER_ID_KEY: 'USER_ID_KEY',
   affiliateCode: 'affiliateCode',
+  junketId: 'junketId',
 };
 
 export default class StorageUtils {

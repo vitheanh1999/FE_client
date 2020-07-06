@@ -4,7 +4,7 @@ import styled from 'styled-components';
 // import { isMobile } from 'react-device-detect';
 import images from '../../../../assets/lucImage';
 import {
-  WEB_SOCKET_URL,
+  WEB_SOCKET_URL, WEB_SOCKET_URL_VIVO_GAMING,
 } from '../../../config';
 import VideoQuality from './VideoQuality';
 import Switch from '../../common/Switch/Switch';
@@ -16,6 +16,8 @@ import {
 } from './layoutVideoStyle';
 import Alert from '../../common/Alert/Alert';
 import { VIDEO_QUALYTIES, ZoomState } from '../../../constants/Constants';
+import junketID from '../../../constants/junketId';
+import StorageUtils, { STORAGE_KEYS } from '../../../helpers/StorageUtils';
 
 let hidden;
 let visibilityChange;
@@ -192,14 +194,27 @@ export default class LayoutVideo extends Component {
   }
 
   callbackChangeTable(nameTable, playerConfig) {
+    const junketId = StorageUtils.getUserItem(STORAGE_KEYS.junketId);
     const { width } = this.props;
     const scale = width / 1060;
     if (this.timeOut) clearTimeout(this.timeOut);
     if (clientPlayer) clientPlayer.closeRoom();
-
-    const url = `${websocketHost + nameTable}/${name}`;
+    let url = '';
+    if (junketId === junketID.DOUBLE_DRAGON) {
+      url += `${websocketHost}rtsp-channel${nameTable}/${name}`;
+    }
+    if (junketId === junketID.VIVO_GAMING) {
+      url += `${WEB_SOCKET_URL_VIVO_GAMING}rtmp-channel${nameTable}/${name}`;
+    } else {
+      const tableA = nameTable && nameTable.split('-');
+      const prefixTableA = tableA && tableA[0] === 'ws';
+      if (prefixTableA) {
+        url += `${WEB_SOCKET_URL_VIVO_GAMING}rtmp-channel${nameTable}/${name}`;
+      } else {
+        url += `${websocketHost + nameTable}/${name}`;
+      }
+    }
     const wsConfig = { url, reconnectTime: 2000 };
-
     clientPlayer = new window.playerClient(null, wsConfig, playerConfig);
     canvasObj = clientPlayer.getCanvasObject();
     clientPlayer.connect()

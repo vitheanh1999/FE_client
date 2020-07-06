@@ -218,7 +218,7 @@ export default class Dropdown extends Component {
           }
         </IconWrapper>
         <TextWrapper width={85}>
-          {info.nameDisplay}
+          {info.text}
           <StatusPoint color={info.color} />
         </TextWrapper>
       </CurrentItemWrapper>
@@ -245,7 +245,7 @@ export default class Dropdown extends Component {
           }
         </IconWrapper>
         <TextWrapper width={100}>
-          {info.nameDisplay}
+          {info.text}
           <StatusPoint color={info.color} />
         </TextWrapper>
       </ItemWrapper>

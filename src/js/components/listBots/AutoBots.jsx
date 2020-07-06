@@ -158,6 +158,7 @@ class AutoBots extends Component {
   }
 
   openGameScene(e, enableView, bot) {
+    StorageUtils.setUserItem(STORAGE_KEYS.junketId, 3);
     e.stopPropagation();
     this.setState({ selectedBotInfo: bot }, () => {
       if (enableView) {
@@ -170,7 +171,7 @@ class AutoBots extends Component {
     const { selectedBotInfo } = this.state;
     const { fetchBotHistoryNow, listBotAction, updateNameTable } = this.props;
     const isOffBot = selectedBotInfo && selectedBotInfo.status === BOT_STATUSES.OFF;
-
+    console.log(this.props.fetchTableStatusNow);
     return (
       <ModalWrapper
         id="modal-view-mode"
@@ -213,7 +214,6 @@ class AutoBots extends Component {
     const {
       bots, total, lucUserGC, timeUpdateListBot,
     } = listBots;
-
     return (
       <ContentContainer>
         <ContentHeader>
