@@ -161,6 +161,7 @@ class AutoBots extends Component {
     const { fetchListTable } = this.props;
     const botTable = fetchListTable.filter(botTable => botTable.id === bot.table_id);
     console.log('botTable ',botTable);
+
     StorageUtils.setUserItem(STORAGE_KEYS.junketId, 3);
     e.stopPropagation();
     this.setState({ selectedBotInfo: bot }, () => {
