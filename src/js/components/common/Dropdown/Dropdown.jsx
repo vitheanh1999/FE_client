@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 // import { isMobile } from 'react-device-detect';
 import { images } from '../../../theme';
 
-const isMobile = false;
-const RatioRadius = 0.06667;
-const Wrapper = styled.div`
+// const isMobile = false;
+export const RatioRadius = 0.06667;
+export const Wrapper = styled.div`
   display: flex;
   width: ${props => props.width}em;
   height: ${props => props.height}em;
@@ -18,9 +18,12 @@ const Wrapper = styled.div`
   border: solid 1px #ccc;
   cursor: pointer;
   color: black;
+  :focus {
+    outline: none;
+  }
 `;
 
-const ButtonDown = styled.div`
+export const ButtonDown = styled.div`
   position: absolute;
   right: 0;
   top: 0;
@@ -33,13 +36,13 @@ const ButtonDown = styled.div`
   ${props => (Math.min(props.parentWidth, props.parentHeight) * RatioRadius)}em 0;
 `;
 
-const WrapperDropdown = styled.div`
+export const WrapperDropdown = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: ${props => props.isFlexColumn && 'column'};
 `;
 
-const Title = styled.div`
+export const Title = styled.div`
   margin-right: 1em;
 `;
 
@@ -49,7 +52,7 @@ export const IconArrow = styled.img`
   ${props => (props.status ? 'transform: rotate(180deg)' : '')}
 `;
 
-const STATUS = {
+export const STATUS = {
   Full: 1,
   Min: 2,
 };
@@ -78,7 +81,7 @@ export const ItemWrapper = styled.div`
   }
 `;
 
-const CurrentItemWrapper = styled.div`
+export const CurrentItemWrapper = styled.div`
   width: ${props => props.width}em;
   height: ${props => props.height}em;
   margin-top: ${props => props.top}em;
@@ -134,7 +137,17 @@ export default class Dropdown extends Component {
     };
   }
 
-  componentWillUnmount() {
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { data } = this.props;
+    if (JSON.stringify(nextProps.data) !== JSON.stringify(data)) {
+      const currentInfo = (nextProps.defaultSelectedId !== null && nextProps.defaultSelectedId !== undefined)
+        ? nextProps.data.find(item => item.id === nextProps.defaultSelectedId) : null;
+
+      this.state = {
+        status: STATUS.Min,
+        currentSelectedId: currentInfo ? currentInfo.id : null,
+      };
+    }
   }
 
   resetSelectedOption() {
@@ -204,7 +217,16 @@ export default class Dropdown extends Component {
       data, width, height, currentSelectedStyle, betweenDistance, moreStyle,
     } = this.props;
     const info = data.find(item => item.id === currentSelectedId);
-    if (!info) return <div />;
+    if (!info) {
+      return (
+        <CurrentItemWrapper
+          width={width}
+          height={height}
+          top={betweenDistance}
+          style={currentSelectedStyle}
+        />
+      );
+    }
     return (
       <CurrentItemWrapper
         width={width}

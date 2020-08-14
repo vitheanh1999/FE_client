@@ -79,7 +79,6 @@ export default class NewsHelper {
 
   save() {
     if (!this.listReadId || !this.listReadTopId) this.init();
-    console.log('save', this.listReadId, this.listReadTopId)
     StorageUtils.setUserItem(STORAGE_KEYS.newsRead, {
       listReadId: this.listReadId,
       listUnreadId: this.listUnreadId,

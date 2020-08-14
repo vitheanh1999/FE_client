@@ -44,11 +44,6 @@ class InputNumberField extends Component {
   onBlur() {
     const { minValue, maxValue } = this.props;
     const { value } = this.state;
-    if (value < (minValue + 1)) {
-      this.setState({
-        isValid: false,
-      });
-    }
     if ((value > maxValue) || (value < minValue) || value === '') {
       this.setState({
         isValid: false,
@@ -88,9 +83,8 @@ class InputNumberField extends Component {
     } = this.props;
     const { isEdit, value, isValid } = this.state;
     const messageErrorGc = minValue !== maxValue
-      ? i18n.t('ChargeGCErrorInput', { minGC: minValue.toLocaleString('ja'), maxGC: maxValue.toLocaleString('ja') })
+      ? i18n.t('ChargeGCErrorInput', { minGC: (minValue + 1).toLocaleString('ja'), maxGC: maxValue.toLocaleString('ja') })
       : i18n.t('userNotCharge');
-
     return (
       <div>
         {isEdit || isError ? (

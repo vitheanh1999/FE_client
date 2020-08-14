@@ -10,6 +10,7 @@ import {
 import Dropdown from '../../common/Dropdown/Dropdown';
 import FormCampaign from './FormCampaign';
 import HelpCampaign from './HelpCampaign';
+import { OPTIONS_MODE } from './TabAdvanceSetting';
 
 class TabBasicSetting extends Component {
   constructor(props) {
@@ -41,7 +42,7 @@ class TabBasicSetting extends Component {
       settingPointRate, maxWidth,
     } = this.props;
     const { data, profit_data: profitData } = campaignData;
-    const { max_profit: maxProfit, min_profit: minProfit } = profitData;
+    const { max_profit: maxProfit, min_profit: minProfit, option_off_min: optionOffMin } = profitData;
     const pointRate = campaignData.data.point_rate;
     return (
       <Wrapper isMobile={isMobile}>
@@ -160,6 +161,27 @@ class TabBasicSetting extends Component {
               width={maxWidth}
             />
             {this.creatButtonHelp('minProfit', 'help.minProfit', '', '')}
+          </Row>
+          <Blank height={0.5} />
+          <Row>
+            <TitleField width={7}>{i18n.t('offMinMode')}</TitleField>
+            <Dropdown
+              data={OPTIONS_MODE}
+              defaultSelectedId={optionOffMin}
+              ignoreWhenReselect
+              onChangeSelected={(id) => {
+                const event = {
+                  target: {
+                    value: id,
+                    validity: { valid: true },
+                  },
+                };
+                onChangeBasic(event, 'option_off_min');
+                onClickHelp('offMinMode', 'help.OffMinMode', '', '');
+              }}
+              width={maxWidth}
+            />
+            {this.creatButtonHelp('offMinMode', 'help.OffMinMode', '', '')}
           </Row>
           <Blank height={1} />
           <Row>

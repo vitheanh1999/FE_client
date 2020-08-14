@@ -19,6 +19,7 @@ import Register from './containers/auth/Register';
 import DashBoard from './containers/mainScreen/MainScreen';
 import Guide from './containers/guide/Guide';
 import { ENABLE_MAINTAIN_STATIC } from './config/localConfig';
+import ShowDebugLogs from './containers/debugLogs/ShowDebugLogs';
 
 const AppRoot = styled.div`
   height: 100vh;
@@ -62,6 +63,7 @@ const Root = () => {
             <Route path="/authenticate" component={Authenticate} />
             <PrivateRoute exact path="/" component={DashBoard} />
             <Route exact path="/not-found" component={NotFound} />
+            <Route exact path="/guide/:tab" component={Guide} />
             <Route exact path="/guide" component={Guide} />
             {ENABLE_LOGIN && <Route exact path="/login" render={() => <Redirect to="/" />} />}
             {ENABLE_LOGIN && <Route exact path="/login-maintain/:id" component={LoginMaintain} />}
@@ -77,6 +79,7 @@ const Root = () => {
             />
             <Route component={NotFound} />
           </Switch>
+          <ShowDebugLogs />
         </AppRoot>
       </BrowserRouter>
     </Provider>

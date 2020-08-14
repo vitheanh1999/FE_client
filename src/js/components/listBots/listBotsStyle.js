@@ -111,6 +111,13 @@ export const TotalGCText = styled.div`
   }
 `;
 
+export const TableText = styled.div`
+  font-size: ${props => (props.fontSize ? props.fontSize : '1em')};
+  font-weight: 700;
+  display: flex;
+  white-space: pre-wrap;
+`;
+
 export const Message = styled.span`
   font-size: ${props => (props.fontSize ? props.fontSize : '1em')};
   font-weight: ${props => (props.fontWeight ? props.fontWeight : '700')};

@@ -21,11 +21,11 @@ class TabMenu extends PureComponent {
   }
 
   render() {
-    const { tabs } = this.props;
+    const { tabs, customStyle } = this.props;
     const listTab = tabs.map(item => this.renderTab(item));
 
     return (
-      <Wrapper>
+      <Wrapper style={customStyle}>
         {listTab}
       </Wrapper>
     );
@@ -40,12 +40,14 @@ TabMenu.defaultProps = {
   ],
   onChangeTab: () => {},
   selectTedId: 1,
+  customStyle: {},
 };
 
 TabMenu.propTypes = {
   onChangeTab: PropTypes.func,
   tabs: PropTypes.arrayOf(PropTypes.objectOf),
   selectTedId: PropTypes.any,
+  customStyle: PropTypes.any,
 };
 
 export default TabMenu;

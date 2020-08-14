@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import images from '../../../../assets/lucImage';
 import {
   WEB_SOCKET_URL, WEB_SOCKET_URL_VIVO_GAMING,
-} from '../../../config';
+} from '../../../config/localConfig';
 import VideoQuality from './VideoQuality';
 import Switch from '../../common/Switch/Switch';
 import i18n from '../../../i18n/i18n';
@@ -15,7 +15,7 @@ import {
   MaxBandwidth, NetworkStatus, PauseVideoBackground,
 } from './layoutVideoStyle';
 import Alert from '../../common/Alert/Alert';
-import { VIDEO_QUALYTIES, ZoomState } from '../../../constants/Constants';
+import { VIDEO_QUALYTIES, ZoomState, TableStatus } from '../../../constants/Constants';
 import junketID from '../../../constants/junketId';
 import StorageUtils, { STORAGE_KEYS } from '../../../helpers/StorageUtils';
 
@@ -188,24 +188,28 @@ export default class LayoutVideo extends Component {
 
   UNSAFE_componentWillReceiveProps(newProps) {
     const { nameTable } = this.state;
-    if (newProps.nameTable !== '' && newProps.nameTable !== nameTable) {
-      this.changeTable(newProps.nameTable);
+    if ((newProps.nameTable !== '' && newProps.nameTable !== nameTable)
+      || (JSON.stringify(newProps.tableStatus) !== JSON.stringify(this.props.tableStatus))
+    ) {
+      this.changeTable(newProps.nameTable, newProps.tableStatus.table_status);
     }
   }
 
-  callbackChangeTable(nameTable, playerConfig) {
-    const junketId = StorageUtils.getUserItem(STORAGE_KEYS.junketId);
-    const { width } = this.props;
-    const scale = width / 1060;
-    if (this.timeOut) clearTimeout(this.timeOut);
+  creatVideo(junketId, nameTable, playerConfig, scale) {
     if (clientPlayer) clientPlayer.closeRoom();
     let url = '';
-    if (junketId === junketID.DOUBLE_DRAGON) {
+    this.videoSize = {};
+    if (junketId === junketID.DOUBLE_DRAGON.id) {
       url += `${websocketHost}rtsp-channel${nameTable}/${name}`;
-    }
-    if (junketId === junketID.VIVO_GAMING) {
+      this.videoSize.width = junketID.DOUBLE_DRAGON.width;
+      this.videoSize.height = junketID.DOUBLE_DRAGON.height;
+    } else if (junketId === junketID.VIVO_GAMING.id) {
       url += `${WEB_SOCKET_URL_VIVO_GAMING}rtmp-channel${nameTable}/${name}`;
-    } else {
+      this.videoSize.width = junketID.VIVO_GAMING.width;
+      this.videoSize.height = junketID.VIVO_GAMING.height;
+    } else { // video AG
+      this.videoSize.width = junketID.AG888.width;
+      this.videoSize.height = junketID.AG888.height;
       const tableA = nameTable && nameTable.split('-');
       const prefixTableA = tableA && tableA[0] === 'ws';
       if (prefixTableA) {
@@ -214,6 +218,7 @@ export default class LayoutVideo extends Component {
         url += `${websocketHost + nameTable}/${name}`;
       }
     }
+
     const wsConfig = { url, reconnectTime: 2000 };
     clientPlayer = new window.playerClient(null, wsConfig, playerConfig);
     canvasObj = clientPlayer.getCanvasObject();
@@ -225,17 +230,16 @@ export default class LayoutVideo extends Component {
     if (isMobile) {
       canvasObj.style.width = '100%';
       if (window.orientation === 90 || window.orientation === -90) {
-        canvasObj.style.width = `${489.5 * scale}px`;
-        canvasObj.style.height = `${scale * 367.5}px`;
+        canvasObj.style.width = `${this.videoSize.width * scale}px`;
+        canvasObj.style.height = `${this.videoSize.height * scale}px`;
       }
     } else {
-      canvasObj.style.width = `${489.5 * scale}px`;
-      canvasObj.style.height = `${scale * 367.5}px`;
+      canvasObj.style.width = `${this.videoSize.width * scale}px`;
+      canvasObj.style.height = `${this.videoSize.height * scale}px`;
     }
     canvasObj.id = 'myCanvas';
     const { currentVideoScale } = this.state;
     canvasObj.style.transform = `scale(${currentVideoScale})`;
-
     const list = document.getElementById('video_container');
     if (list.childNodes[0] != null) {
       list.removeChild(list.childNodes[0]);
@@ -254,7 +258,20 @@ export default class LayoutVideo extends Component {
     }
   }
 
-  changeTable(nameTable) {
+  callbackChangeTable(nameTable, playerConfig, tableStatus) {
+    const junketId = StorageUtils.getUserItem(STORAGE_KEYS.junketId);
+    const { width } = this.props;
+    const scale = width / 1060;
+    if (this.timeOut) clearTimeout(this.timeOut);
+    if (tableStatus === TableStatus.On) {
+      this.creatVideo(junketId, nameTable, playerConfig, scale);
+      return;
+    }
+    // => tableStatus = TableStatus.on || TableStatus.waiting
+    if (clientPlayer) clientPlayer.closeRoom();
+  }
+
+  changeTable(nameTable, tableStatus) {
     const playerConfig = {
       reuseMemory: true,
       useWorker: true,
@@ -267,7 +284,7 @@ export default class LayoutVideo extends Component {
       nameTable,
       isNewTable: true,
     }, () => {
-      this.callbackChangeTable(nameTable, playerConfig);
+      this.callbackChangeTable(nameTable, playerConfig, tableStatus);
     });
   }
 
@@ -355,6 +372,7 @@ export default class LayoutVideo extends Component {
   pauseVideo() {
     const { pauseVideo } = this.state;
     if (pauseVideo) return;
+    if (!clientPlayer) return;
     if (clientPlayer.isPlaying()) {
       clientPlayer.pause();
     }
@@ -363,9 +381,13 @@ export default class LayoutVideo extends Component {
 
   resumeVideo() {
     const { pauseVideo } = this.state;
+    const junketId = StorageUtils.getUserItem(STORAGE_KEYS.junketId);
     if (pauseVideo === false) return;
     if (!clientPlayer.isPlaying()) {
       clientPlayer.play();
+      if (junketId === junketID.VIVO_GAMING.id) {
+        clientPlayer.toLive();
+      }
     }
     this.setState({ pauseVideo: false });
   }
@@ -419,9 +441,9 @@ export default class LayoutVideo extends Component {
     } = this.props;
     const isShowHistory = false;
     const scale = width / 1060;
-    if (canvasObj) {
-      canvasObj.style.width = `${489.5 * scale}px`;
-      canvasObj.style.height = `${scale * 367.5}px`;
+    if (canvasObj && this.videoSize) {
+      canvasObj.style.width = `${this.videoSize.width * scale}px`;
+      canvasObj.style.height = `${this.videoSize.height * scale}px`;
     }
     const loadingAnim = showLoading ? <LoadingAnimation id="LoadingAnimation" scale={scale}>Loading ...</LoadingAnimation> : null;
     const loadingLogo = showLoading ? <LoadingLogo id="LoadingLogo" scale={scale} /> : null;

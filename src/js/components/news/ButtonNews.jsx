@@ -8,9 +8,6 @@ const Wrapper = styled.div`
   width: ${props => props.width}em;
   height: ${props => props.width * 1.196}em;
   background-size: contain;
-  position: absolute;
-  top: 1em;
-  right: 1em;
   cursor: pointer;
 
   &: hover {

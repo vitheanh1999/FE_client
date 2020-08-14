@@ -15,7 +15,7 @@ import {
   HeaderArea, NameArea, Name,
   Title, DepositInfo, CampaignInfo,
   WrapperBotInfo, Content, CampaignAndDepositArea,
-  WrapperSpan,
+  WrapperSpan, NameTable, WrapperStatus,
 } from './BotDetailStyle';
 import InfoRemainTime from '../listBots/InfoRemainTime';
 import Countdown from '../common/Countdown';
@@ -145,6 +145,7 @@ class BotDetailInfo extends Component {
         amountGcTitle={i18n.t('amountGc')}
         allGcTitle={i18n.t('allGc')}
         submitTitle={i18n.t('payout')}
+        isChargePopup={false}
       />
     );
   }
@@ -213,10 +214,24 @@ class BotDetailInfo extends Component {
             }
             <BotDeletePopup handleDeleteBot={handleDeleteBot} bot={bot} />
           </Name>
-          <Countdown
-            seconds={bot.remain_time}
-            renderTime={data => this.renderCountdownBot(data)}
-          />
+          <WrapperStatus tableStatus={bot.status}>
+            <Countdown
+              seconds={bot.remain_time}
+              renderTime={data => this.renderCountdownBot(data)}
+            />
+            {
+              bot.status !== 0 && (
+                <NameTable
+                  width="90%"
+                  marginLeft="2em"
+                  fontSize="1.2em"
+                >
+                  {i18n.t('tableText')} : {bot.table_name_display}
+                </NameTable>
+              )
+            }
+          </WrapperStatus>
+
         </NameArea>
         <ButtonViewMode
           marginTop={4}

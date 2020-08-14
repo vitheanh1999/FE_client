@@ -17,7 +17,7 @@ import {
 } from './styles/gameSceneStyles';
 import { removeTimeout } from './logicCore/utils';
 import StorageUtils, { STORAGE_KEYS } from '../../helpers/StorageUtils';
-import Alert from '../common/Alert/Alert';
+import { TableStatus } from '../../constants/Constants';
 import images from '../../../assets/lucImage';
 import i18n from '../../i18n/i18n';
 
@@ -131,8 +131,11 @@ class GameScene extends SuperGameScene {
   onSuccessFetchTableStatus(data) {
     const { botIsBetting } = this.state;
     this.setState({ tableStatus: data.data });
-
-    if (data.data.table_is_pause || data.data.table_shuffling || !data.data.table_status || (botIsBetting === false)) {
+    if (data.data.table_is_pause
+      || data.data.table_shuffling
+      || data.data.table_status === TableStatus.Waiting
+      || data.data.table_status === TableStatus.Off
+      || (botIsBetting === false)) {
       this.woodPlaneRef.current.showNotiWaitBet();
     } else {
       this.woodPlaneRef.current.hiddenNotiWaitBet();
@@ -200,18 +203,20 @@ class GameScene extends SuperGameScene {
         const {
           turnId, // tableId
         } = this.state;
-
+        
         const { preBetData } = this.state;
-        this.woodPlaneRef.current.updateDataLobby(event.point);
+        if (turnId > 0) {
+          this.woodPlaneRef.current.updateDataLobby(event.point);
+          this.setState({
+            dataResult: event.point,
+            preBetData: reBet.checkResetPreBetData(turnId, preBetData),
+          }, () => {
+            this.timeOutResult = setTimeout(() => {
+              this.closeResult();
+            }, 4000);
+          });
+        }
         this.props.fetchTableStatusNow(this.props.botInfo.id, this.onSuccessFetchTableStatus, this.onErrorFetchTableStatus)
-        this.setState({
-          dataResult: event.point,
-          preBetData: reBet.checkResetPreBetData(turnId, preBetData),
-        }, () => {
-          this.timeOutResult = setTimeout(() => {
-            this.closeResult();
-          }, 4000);
-        });
       }
     });
   }
@@ -267,6 +272,7 @@ class GameScene extends SuperGameScene {
     const { bettingActions } = this.props;
     const userRole = 'Player';
 
+    this.registerNewTurnPush(socket, nameTb);
     this.registerUpdatedHistory(socket);
     this.registerEventPauseTable(socket, nameTb);
     this.registerOpenCardPush(socket, nameTb, bettingActions, userRole);
@@ -323,8 +329,7 @@ class GameScene extends SuperGameScene {
     const ratioWH = 1.6319;
     const { closeViewMode, goDashBoard, botInfo, listBotAction, width } = this.props;
     const height = width / ratioWH;
-    const { totalBet, nameTable, dataResult } = this.state;
-
+    const { totalBet, nameTable, dataResult, tableStatus } = this.state;
     const viewResult = (dataResult && dataResult.turnId > 0)
       ? (
         <LayoutResult
@@ -339,7 +344,7 @@ class GameScene extends SuperGameScene {
         <BackgroundBetting width={width} height={height} images={images.BackgroundSprite} />
         <GameMenu
           isDeal
-          nameTable={nameTable}
+          nameTable={botInfo.table_name_display}
           tableId={-1}
           clickHall={() => this.goToHall()}
           choseTable={tableData => this.changeTable(tableData)}
@@ -357,6 +362,7 @@ class GameScene extends SuperGameScene {
           width={width}
           height={height}
           closeViewMode={() => closeViewMode()}
+          tableStatus={tableStatus}
         />
         <LayoutWoodPlane
           ref={this.woodPlaneRef}

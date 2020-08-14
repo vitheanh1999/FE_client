@@ -47,7 +47,7 @@ class InputFloatField extends InputNumberField {
       value = parseFloat(textValue, 10);
       this.setState({
         isValid: true,
-        value: textValue,
+        value,
         isEdit: true,
       });
       if (isError) handleChangeProps(true, 'isValidGC');

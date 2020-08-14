@@ -2,32 +2,36 @@ import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import {
-  WrapperDetail, FooterWrapper, ButtonOK,
-  ButtonRevert, Column, Blank,
+  WrapperDetail, Column, Blank,
 } from '../campaign/campaignStyle';
 import Spinner from '../common/Spinner';
 import i18n from '../../i18n/i18n';
 import Alert from '../common/Alert/Alert';
 import ApiErrorUtils from '../../helpers/ApiErrorUtils';
 import {
-  TitleGroup, Wrapper, renderButtonHelp, Row,
+  TitleGroup, Wrapper, renderButtonHelp, Row, WrapperTable,
 } from '../campaign/detail/tabBasicSettingStyle';
-import HelpCampaign from '../campaign/detail/HelpCampaign';
 import FormCampaign from '../campaign/detail/FormCampaign';
 import { LOGIC_PATTERN_DEFAULT_DATA, BET_PATTERN_DEFAULT_DATA } from '../../constants/customCampaign';
-import CardNoTable, { TABS } from './CardNoTable';
+import { TABS } from './CardNoTable';
+import TextAreaWithTruncate from '../common/TextAreaWithTruncate';
+import SettingCardNoTable, { CUSTOM_MODE } from './SettingCardNoTable';
+import Keyboard from '../keyboard/Keyboard';
+import AutoSave, { AUTO_SAVE_KEY } from '../../helpers/AutoSave';
+import { refreshToken } from '../../helpers/utils';
+import StorageUtils, { STORAGE_KEYS } from '../../helpers/StorageUtils';
+
+const Notice = styled(Blank)`
+  color: red;
+  margin-left: 1em;
+  display: flex;
+  align-items: center;
+`;
 
 const Mode = {
   AddNew: 1,
   Edit: 2,
 };
-
-const DescriptionInput = styled.textarea`
-  margin-left: 1em;
-  width: 100%;
-  min-height: 5em;
-  max-height: 5em;
-`;
 
 const validateRequired = (value) => {
   if (value === '') {
@@ -62,7 +66,6 @@ class PopUpDetail extends Component {
     }
 
     this.state = {
-      isEdited: false,
       isLoading: false,
       mode,
       helpData: {
@@ -72,29 +75,36 @@ class PopUpDetail extends Component {
         optionDetail: '',
       },
       errorMessageName: '',
+      errorMessageDesc: '',
       dataInfoPopup,
       isValidData: false,
       haveChange: false,
+      haveChangeCardNo: false,
     };
 
     this.onSuccess = this.onSuccess.bind(this);
     this.onError = this.onError.bind(this);
 
-    this.deleteLastColumnData = this.deleteLastColumnData.bind(this);
-    this.addNewColumnData = this.addNewColumnData.bind(this);
-    this.onChangeValueColumn = this.onChangeValueColumn.bind(this);
-    this.onOkClick = this.onOkClick.bind(this);
     this.onResize = this.onResize.bind(this);
     this.onRevert = this.onRevert.bind(this);
     this.cardNoTableRef = createRef();
+    this.onSaveDraft = this.onSaveDraft.bind(this);
     this.onBlurNameInput = this.onBlurNameInput.bind(this);
+    this.onSave = this.onSave.bind(this);
     window.addEventListener('resize', this.onResize);
+    this.interval = null;
   }
 
   componentWillMount() {
     const { selectTedId, type, getDataPopUp } = this.props;
     let dataInfoPopup = null;
+    if (AutoSave.instance.checkDraft(AUTO_SAVE_KEY.popupDetail)) {
+      const state = AutoSave.instance.getDraftContent(AUTO_SAVE_KEY.popupDetail);
+      this.setState(state);
+      return;
+    }
     if (selectTedId) {
+      this.setState({ isLoading: true });
       getDataPopUp(selectTedId, (data) => {
         ApiErrorUtils.handleServerError(
           data,
@@ -103,10 +113,11 @@ class PopUpDetail extends Component {
             this.setState({
               dataInfoPopup: JSON.parse(JSON.stringify(data.data)),
               cloneDataInfoPopup: JSON.parse(JSON.stringify(data.data)),
+              isLoading: false,
             });
           },
         );
-      }, () => { });
+      }, this.onError);
     } else if (type === TABS.LIST_LOGIC_BET.id) {
       dataInfoPopup = {
         logic_pattern_name: '',
@@ -122,14 +133,20 @@ class PopUpDetail extends Component {
     }
     this.setState({
       dataInfoPopup,
+      cloneDataInfoPopup: JSON.parse(JSON.stringify(dataInfoPopup)),
     });
   }
 
   componentDidMount() {
+    if (this.interval) clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      refreshToken(() => clearInterval(this.interval));
+    }, 60 * 1000);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
+    clearInterval(this.interval);
   }
 
   onError(error) {
@@ -154,19 +171,49 @@ class PopUpDetail extends Component {
       dataInfoPopup: JSON.parse(JSON.stringify(cloneDataInfoPopup)),
       errorMessageName: '',
       haveChange: false,
+    }, () => {
+      this.validateData();
     });
   }
 
-  onOkClick() {
-    const { createOrUpdateData, onClose } = this.props;
-    const { dataInfoPopup, haveChange, mode } = this.state;
-    if (haveChange || mode === Mode.AddNew) {
-      this.validateData();
+  onSave(listCardNos, haveChangeCardNo) {
+    StorageUtils.setSectionStorageItem(STORAGE_KEYS.hasAction, true);
+
+    const {
+      createOrUpdateData, onClose, totalBotOffInData, totalBotOnInData,
+    } = this.props;
+    const {
+      dataInfoPopup, mode, isLoading, cloneDataInfoPopup,
+    } = this.state;
+    const newData = { ...dataInfoPopup };
+    newData.card_nos = listCardNos;
+    const haveChange = !(JSON.stringify(newData) === JSON.stringify(cloneDataInfoPopup));
+    if (mode === Mode.AddNew || haveChange) {
       if (this.validateData()) {
-        this.setState({ isLoading: true });
-        createOrUpdateData(dataInfoPopup, this.onSuccess, this.onError);
+        if (totalBotOffInData && haveChangeCardNo && mode === Mode.Edit && totalBotOnInData === 0) {
+          Alert.instance.showAlertTwoButtons(
+            i18n.t('warning'),
+            i18n.t('warningChangeDataResetBot'),
+            [i18n.t('cancel'), i18n.t('ok')],
+            [
+              () => Alert.instance.hideAlert(), !isLoading ? () => {
+                Alert.instance.hideAlert();
+                this.setState({ isLoading: true });
+                createOrUpdateData(newData, this.onSuccess, this.onError);
+                AutoSave.instance.deleteDraft();
+              } : null,
+            ],
+          );
+        } else {
+          this.setState({ isLoading: true });
+          createOrUpdateData(newData, this.onSuccess, this.onError);
+        }
       }
-    } else onClose();
+    } else onClose(false);
+  }
+
+  onSaveDraft() {
+    AutoSave.instance.saveDraft(AUTO_SAVE_KEY.popupDetail, this.state);
   }
 
   onSuccess(data) {
@@ -176,51 +223,30 @@ class PopUpDetail extends Component {
       data,
       Alert.instance,
       () => {
-        onClose();
+        onClose(false);
         callbackFetchData(currentPage);
       },
     );
   }
 
   onChangeInput(event, field) {
+    StorageUtils.setSectionStorageItem(STORAGE_KEYS.hasAction, true);
+
     const { type } = this.props;
     const state = { ...this.state };
     state.haveChange = true;
-    const valueInput = event.target.value;
+    let valueInput = event.target.value;
     const { dataInfoPopup } = state;
     if (field === 'name') {
       dataInfoPopup[type === TABS.LIST_LOGIC_BET.id ? 'logic_pattern_name' : 'bet_pattern_name'] = valueInput;
       state.errorMessageName = validateRequired(valueInput);
     } else {
+      if (valueInput.length > 1000) {
+        valueInput = valueInput.slice(0, 1000);
+      }
       dataInfoPopup.description = valueInput;
     }
-    if (state.mode === Mode.Edit) {
-      state.isEdited = true;
-    }
-    this.setState(state);
-  }
-
-  onChangeValueColumn(value, index, field) {
-    const state = { ...this.state };
-    state.haveChange = true;
-    const { dataInfoPopup } = state;
-    const { card_nos } = dataInfoPopup;
-    if (field === 'bet_value') {
-      card_nos[index][field] = value;
-      if (value === 'LOOK') {
-        card_nos[index].lose_next = card_nos[index].win_next;
-      }
-    } else {
-      if (card_nos[index].bet_value === 'LOOK') {
-        card_nos[index].win_next = value && !isNaN(value) ? Number(value) : '';
-        card_nos[index].lose_next = value && !isNaN(value) ? Number(value) : '';
-      }
-      card_nos[index][field] = value && !isNaN(value) ? Number(value) : '';
-    }
-    if (state.mode === Mode.Edit) {
-      state.isEdited = true;
-    }
-    this.setState(state);
+    this.setState(state, () => this.onSaveDraft());
   }
 
   onBlurNameInput() {
@@ -232,8 +258,16 @@ class PopUpDetail extends Component {
     this.setState(state);
   }
 
+  checkChangeData() {
+    const {
+      dataInfoPopup, cloneDataInfoPopup,
+    } = this.state;
+    return !(JSON.stringify(dataInfoPopup) === JSON.stringify(cloneDataInfoPopup))
+      || this.cardNoTableRef.current.checkChangeData();
+  }
+
   validateData() {
-    const isValidCardNoData = this.cardNoTableRef.current.checkValidate();
+    const isValidCardNoData = this.cardNoTableRef.current.validateAll();
     const { dataInfoPopup } = this.state;
     const { type } = this.props;
     const errorMessageName = validateRequired(dataInfoPopup[type === TABS.LIST_LOGIC_BET.id ? 'logic_pattern_name' : 'bet_pattern_name']);
@@ -242,47 +276,6 @@ class PopUpDetail extends Component {
     });
     if (errorMessageName || !isValidCardNoData) return false;
     return true;
-  }
-
-  deleteLastColumnData() {
-    const state = { ...this.state };
-    state.haveChange = true;
-    const { dataInfoPopup } = state;
-    const { card_nos } = dataInfoPopup;
-    card_nos.map((item) => {
-      if (item.win_next === card_nos.length) {
-        item.win_next = '';
-      }
-      if (item.lose_next === card_nos.length) {
-        item.lose_next = '';
-      }
-    });
-    card_nos.pop();
-    if (state.mode === Mode.Edit) {
-      state.isEdited = true;
-    }
-    this.setState(state);
-  }
-
-  addNewColumnData() {
-    const state = { ...this.state };
-    state.haveChange = true;
-    const { type, settingWorkerData } = this.props;
-    const { dataInfoPopup } = state;
-    if (dataInfoPopup.card_nos.length >= settingWorkerData.max_card_no) return;
-    const betField = type === TABS.LIST_LOGIC_BET.id ? 'bet_point' : 'bet_value';
-    const { card_nos } = dataInfoPopup;
-    const newRowCardNo = {
-      card_no: card_nos.length + 1,
-      [betField]: type === TABS.LIST_LOGIC_BET.id ? 0 : 'B',
-      win_next: '',
-      lose_next: '',
-    };
-    card_nos.push(newRowCardNo);
-    if (state.mode === Mode.Edit) {
-      state.isEdited = true;
-    }
-    this.setState(state);
   }
 
   creatButtonHelp(fieldName, fieldContent, optionName, optionDetail, optionDescription = null) {
@@ -298,90 +291,92 @@ class PopUpDetail extends Component {
 
   render() {
     const {
-      isEdited, isLoading, helpData, errorMessageName,
+      isLoading, errorMessageName,
       dataInfoPopup,
     } = this.state;
     const {
       fontSize, isMobile, type, settingWorkerData,
+      changeMarginBottom, totalBotOnInData,
     } = this.props;
     return (
       <WrapperDetail isMobile={isMobile} fontSize={fontSize}>
-        <Wrapper isMobile={isMobile}>
-          <Column>
-            <Blank height={2} />
+        <Wrapper
+          isMobile={isMobile}
+          style={{ borderBottom: 0 }}
+        >
+          <Column style={{ width: '100%' }}>
+            {
+              totalBotOnInData
+                ? (
+                  <Notice height={2}>{i18n.t('noticeChangeDataWhenHasBotOn')}</Notice>
+                ) : (
+                  <Blank height={2} />
+                )
+            }
             <Row>
-              <TitleGroup width={8}>
-                {i18n.t('name')}
+              <TitleGroup>
+                {i18n.t(`${type === TABS.LIST_LOGIC_BET.id ? 'customCampaign.logicPatternName' : 'customCampaign.betPatternName'}`).concat(':')}
               </TitleGroup>
+            </Row>
+            <Row>
               <FormCampaign
                 onChange={e => this.onChangeInput(e, 'name')}
                 onBlur={this.onBlurNameInput}
                 isValid={errorMessageName === ''}
                 invalidText={errorMessageName}
-                margin={errorMessageName === '' ? '' : '1em 0 0 0'}
+                margin={errorMessageName === '' ? '0 0 0 1em' : '1em 0 0 1em'}
                 name="name"
                 maxLength={20}
                 labelPaddingBottom={4}
-                value={dataInfoPopup && dataInfoPopup[type === TABS.LIST_LOGIC_BET.id ? 'logic_pattern_name' : 'bet_pattern_name']}
+                value={(dataInfoPopup && dataInfoPopup[type === TABS.LIST_LOGIC_BET.id ? 'logic_pattern_name' : 'bet_pattern_name']) || ''}
+                customStyle={{ width: '100%', marginLeft: '1em', marginRight: '1em' }}
+                width="unset"
+                onFocus={() => {
+                  Keyboard.instance.hideKeyboard();
+                  changeMarginBottom(0);
+                }}
+                disabled={!!totalBotOnInData}
               />
-              {this.creatButtonHelp('name', 'help.name', '', '')}
             </Row>
             <Blank height={1} />
-            <Row style={{ justifyContent: 'space-between' }}>
-              <TitleGroup width={8}>
-                {i18n.t('customCampaign.description').concat(':')}
+            <Row>
+              <TitleGroup width={20}>
+                {i18n.t('customCampaign.description').concat(i18n.t('customCampaign.descriptionNoti').concat(':'))}
               </TitleGroup>
-              {
-                this.creatButtonHelp(
-                  'customCampaign.description',
-                  `help.description${type === TABS.LIST_LOGIC_BET.id ? 'LogicPattern' : 'BetPattern'}`,
-                  '',
-                  '',
-                )
-              }
             </Row>
             <Row>
-              <DescriptionInput
+              <TextAreaWithTruncate
                 onChange={e => this.onChangeInput(e, 'description')}
-                value={dataInfoPopup && dataInfoPopup.description}
+                value={(dataInfoPopup && dataInfoPopup.description) || ''}
+                onFocus={() => {
+                  Keyboard.instance.hideKeyboard();
+                  changeMarginBottom(0);
+                }}
+                disabled={!!totalBotOnInData}
               />
             </Row>
             <Blank height={1} />
             <Row style={{ justifyContent: 'space-between' }}>
-              <TitleGroup width={8}>
-                {i18n.t('customCampaign.cardNo').concat(':')}
+              <TitleGroup>
+                {i18n.t('customCampaign.cardNoSetting').concat(':')}
               </TitleGroup>
-              {this.creatButtonHelp('customCampaign.cardNo', 'help.cardNo', '', '')}
             </Row>
             <Row>
-              <CardNoTable
-                cardNoData={dataInfoPopup ? dataInfoPopup.card_nos : []}
-                deleteLastColumnData={this.deleteLastColumnData}
-                addNewColumnData={this.addNewColumnData}
-                onChangeValueColumn={this.onChangeValueColumn}
-                type={type}
-                ref={this.cardNoTableRef}
-                isMobile={isMobile}
-                settingWorkerData={settingWorkerData}
-              />
+              <WrapperTable>
+                <SettingCardNoTable
+                  cardNoData={dataInfoPopup ? dataInfoPopup.card_nos : []}
+                  onSave={this.onSave}
+                  mode={type === TABS.LIST_LOGIC_BET.id ? CUSTOM_MODE.LOGIC : CUSTOM_MODE.BET}
+                  ref={this.cardNoTableRef}
+                  settingWorkerData={settingWorkerData}
+                  changeMarginBottom={changeMarginBottom}
+                  onSaveDraft={this.onSaveDraft}
+                  disabled={!!totalBotOnInData}
+                />
+              </WrapperTable>
             </Row>
           </Column>
-          <HelpCampaign
-            fieldName={helpData.fieldName}
-            fieldContent={helpData.fieldContent}
-            optionName={helpData.optionName}
-            optionDetail={helpData.optionDetail}
-            optionDetailContent={helpData.optionDetailContent}
-          />
         </Wrapper>
-        <FooterWrapper>
-          {
-            isEdited && <ButtonRevert onClick={this.onRevert}>{i18n.t('revert')}</ButtonRevert>
-          }
-          <ButtonOK onClick={!isLoading ? this.onOkClick : null}>
-            {isEdited ? i18n.t('save') : i18n.t('ok')}
-          </ButtonOK>
-        </FooterWrapper>
         <Spinner isLoading={isLoading} />
       </WrapperDetail>
     );
@@ -404,6 +399,9 @@ PopUpDetail.propTypes = {
   settingWorkerData: PropTypes.object.isRequired,
   getDataPopUp: PropTypes.func.isRequired,
   currentPage: PropTypes.number.isRequired,
+  totalBotOffInData: PropTypes.number.isRequired,
+  totalBotOnInData: PropTypes.number.isRequired,
+  changeMarginBottom: PropTypes.func.isRequired,
 };
 
 export default PopUpDetail;

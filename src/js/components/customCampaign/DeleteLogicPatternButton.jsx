@@ -6,12 +6,13 @@ import { images } from '../../theme';
 import Alert from '../common/Alert/Alert';
 import { ButtonAction } from '../campaign/campaignStyle';
 
-const warningDelete = () => {
+const warningDelete = (e) => {
   Alert.instance.showAlert(
     i18n.t('warning'),
     i18n.t('customCampaign.canNotDelete'),
     Alert.instance.hideAlert(),
   );
+  e.stopPropagation();
 };
 
 class DeleteLogicPatternButton extends Component {
@@ -23,13 +24,13 @@ class DeleteLogicPatternButton extends Component {
     this.onDelete = this.onDelete.bind(this);
   }
 
-  onDelete() {
+  onDelete(e) {
     const { logicPatternInfo, handleDelete } = this.props;
-    const { id } = logicPatternInfo;
+    const { id, logic_pattern_name } = logicPatternInfo;
     Alert.instance.showAlertTwoButtons(
       i18n.t('warning'),
-      i18n.t('customCampaign.DeleteLogic'),
-      [i18n.t('cancel'), i18n.t('ok')],
+      i18n.t('customCampaign.DeleteLogic').replace('param', logic_pattern_name),
+      [i18n.t('cancel'), i18n.t('yes')],
       [
         () => Alert.instance.hideAlert(),
         () => {
@@ -39,10 +40,11 @@ class DeleteLogicPatternButton extends Component {
       ],
       Alert.instance.hideAlert(),
     );
+    e.stopPropagation();
   }
 
   render() {
-    const { logicPatternInfo } = this.props;
+    // const { logicPatternInfo } = this.props;
     return (
       <ButtonAction
         fontSize="1em"
@@ -52,7 +54,7 @@ class DeleteLogicPatternButton extends Component {
         borderRadiusor={2}
         color="#dc3545"
         height={2}
-        onClick={() => (logicPatternInfo.count_campaign_use_logic > 0 ? warningDelete() : this.onDelete())}
+        onClick={e => this.onDelete(e)}
       >
         <img
           src={images.deleteIcon}
@@ -65,7 +67,8 @@ class DeleteLogicPatternButton extends Component {
 }
 
 DeleteLogicPatternButton.propTypes = {
-  campaignInfo: PropTypes.object.isRequired,
+  // campaignInfo: PropTypes.object.isRequired,
+  // logicPatternInfo: PropTypes.objectOf(PropTypes.any).isRequired,
   handleDelete: PropTypes.func.isRequired,
 };
 

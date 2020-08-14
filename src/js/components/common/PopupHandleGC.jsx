@@ -43,6 +43,7 @@ const MessageContent = styled(Message)`
   margin-top: ${props => props.marginTop}em;
   font-weight: ${props => (props.fontWeight ? props.fontWeight : 900)};
   display: flex;
+  color: ${props => (props.isDisable ? '#ccc' : '#fff')};
 `;
 
 const ContentItem = styled.div`
@@ -119,7 +120,7 @@ class PopupHandleGC extends Component {
     }
     value = convertNumber(value);
     if ((value === '')
-      || (value <= 0)
+      || (value < 1)
       || (value > maxValue)
     ) {
       this.setState({
@@ -181,14 +182,24 @@ class PopupHandleGC extends Component {
   }
 
   renderError() {
-    const { maxValue, totalGC } = this.props;
+    const { maxValue, totalGC, isChargePopup } = this.props;
     const { isHandleAll, isValidGC } = this.state;
     if (maxValue < totalGC && isHandleAll) {
       return (<ErrorText>{i18n.t('chargeAmountMax')}</ErrorText>);
     }
     if (!isHandleAll && !isValidGC) {
       return (
-        <ErrorText>{i18n.t('ChargeGCErrorInput', { minGC: 0, maxGC: maxValue.toLocaleString('ja') })}</ErrorText>
+        <ErrorText>{i18n.t('ChargeGCErrorInput', { minGC: 1, maxGC: maxValue.toLocaleString('ja') })}</ErrorText>
+      );
+    }
+    if (totalGC < 1) {
+      if (isChargePopup) {
+        return (
+          <ErrorText>{i18n.t('gcLucLessThan1')}</ErrorText>
+        );
+      }
+      return (
+        <ErrorText>{i18n.t('gcLessThan1')}</ErrorText>
       );
     }
     return '';
@@ -198,7 +209,7 @@ class PopupHandleGC extends Component {
     const { isValidGC, isHandleAll } = this.state;
     const {
       onClose, submitTitle,
-      totalGC, maxValue,
+      totalGC, maxValue, isChargePopup,
     } = this.props;
     const isDisable = isHandleAll ? totalGC > maxValue : !isValidGC;
 
@@ -226,7 +237,7 @@ class PopupHandleGC extends Component {
               height="3em"
               width="8em"
               onClick={this.handleSubmit}
-              disable={isDisable}
+              disable={isDisable || totalGC <= 0 || (isChargePopup && totalGC < 1)}
             >
               {submitTitle}
             </ButtonDisable>
@@ -240,7 +251,7 @@ class PopupHandleGC extends Component {
     const {
       onClose, label,
       title, totalLabel,
-      amountGcTitle, totalGC,
+      amountGcTitle, totalGC, isChargePopup,
       allGcTitle,
     } = this.props;
     const {
@@ -248,6 +259,7 @@ class PopupHandleGC extends Component {
       isHandleAll,
     } = this.state;
     const width = isMobile ? '36em' : '60%';
+    const isDisable = totalGC < 1;
     return (
       <WrapperOnBot className="alertClass">
         <AlertStyled
@@ -280,10 +292,15 @@ class PopupHandleGC extends Component {
             <ContentPopup fontSize={isMobile && 0.8}>
               <ContentItem>
                 <RadioButton
-                  isChecked={isHandleAll}
+                  isChecked={isChargePopup && isDisable ? false : isHandleAll}
                   onChange={() => this.handleChangeMethod(true)}
+                  isDisable={isChargePopup && isDisable}
                 />
-                <MessageContent marginLeft={1} onClick={() => this.handleChangeMethod(true)}>
+                <MessageContent
+                  isDisable={isDisable && isChargePopup}
+                  marginLeft={1}
+                  onClick={isChargePopup && isDisable ? null : () => this.handleChangeMethod(true)}
+                >
                   {allGcTitle}
                 </MessageContent>
               </ContentItem>
@@ -291,8 +308,13 @@ class PopupHandleGC extends Component {
                 <RadioButton
                   isChecked={!isHandleAll}
                   onChange={() => this.handleChangeMethod(false)}
+                  isDisable={isDisable}
                 />
-                <MessageContent marginLeft={1} onClick={() => this.handleChangeMethod(false)}>
+                <MessageContent
+                  isDisable={isDisable}
+                  marginLeft={1}
+                  onClick={isDisable ? null : () => this.handleChangeMethod(false)}
+                >
                   {amountGcTitle}
                 </MessageContent>
                 <InputStyle
@@ -301,6 +323,7 @@ class PopupHandleGC extends Component {
                   onChange={event => this.onChangeValue(event)}
                   onFocus={this.onFocusValue}
                   value={amount.toString()}
+                  disabled={isDisable}
                 />
               </ContentItem>
               {this.renderError()}
@@ -327,6 +350,11 @@ PopupHandleGC.propTypes = {
   totalGC: PropTypes.number.isRequired,
   allGcTitle: PropTypes.string.isRequired,
   submitTitle: PropTypes.string.isRequired,
+  isChargePopup: PropTypes.bool,
+};
+
+PopupHandleGC.defaultProps = {
+  isChargePopup: true,
 };
 
 export default PopupHandleGC;

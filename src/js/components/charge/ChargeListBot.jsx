@@ -135,8 +135,8 @@ class ChargeListBot extends Component {
                     {item.status === 1 ? (
                       <ButtonStatus isOn>{i18n.t('on')}</ButtonStatus>
                     ) : (
-                        <ButtonStatus>{i18n.t('off')}</ButtonStatus>
-                      )}
+                      <ButtonStatus>{i18n.t('off')}</ButtonStatus>
+                    )}
                     <span>{item.name}</span>
                   </WrapperStatus>
                 </Label>
@@ -190,7 +190,9 @@ class ChargeListBot extends Component {
               <InlineDiv>
                 <ChargeButton
                   isDisabled={!canBatchCharge}
-                  onClick={canBatchCharge && (() => this.openModalCharge(idsSelected))}
+                  onClick={() => {
+                    if (canBatchCharge) this.openModalCharge(idsSelected);
+                  }}
                 >{i18n.t('batchCharge')}
                 </ChargeButton>
                 {

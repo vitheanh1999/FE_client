@@ -91,6 +91,7 @@ class Campaign extends Component {
       profit_data: {
         max_profit: 0,
         min_profit: 0,
+        option_off_min: 1,
       },
       data: {
         win_rate_value: '',
@@ -133,7 +134,7 @@ class Campaign extends Component {
     } = this.props;
     return (
       <ModalWrapper
-        id="DetailModal"
+        id="DetailCampaignModal"
         isOpen={isShowDetail}
         centered
         isMobile={isMobile}

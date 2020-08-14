@@ -56,7 +56,7 @@ class CampaignItemList extends PureComponent {
     const { campaignInfo } = this.props;
 
     return (
-      <WrapperListItem >
+      <WrapperListItem>
         <ListInformation>
           <Title>{campaignInfo.name}</Title>
           {

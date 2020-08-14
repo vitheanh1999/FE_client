@@ -9,6 +9,7 @@ import Campaigns from './campaigns';
 import news from './news';
 import table from './table';
 import customCampaign from './customCampaign';
+import Language from './Language';
 
 const appReducer = combineReducers({
   User,
@@ -21,6 +22,7 @@ const appReducer = combineReducers({
   news,
   table,
   customCampaign,
+  Language,
 });
 
 const rootReducer = (state, action) => {

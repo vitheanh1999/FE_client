@@ -125,13 +125,14 @@ export default class Form extends Component {
     const {
       label, marginBottom,
       labelPaddingBottom, marginRight,
-      margin,
+      margin, customStyle,
     } = this.props;
     return (
       <Wrapper
         marginBottom={marginBottom}
         marginRight={marginRight}
         margin={margin}
+        style={customStyle}
       >
         {
           label && (
@@ -167,6 +168,7 @@ Form.propTypes = {
   placeholder: PropTypes.string,
   maxLength: PropTypes.number,
   pattern: PropTypes.string,
+  customStyle: PropTypes.objectOf(PropTypes.any),
 };
 
 Form.defaultProps = {
@@ -186,4 +188,5 @@ Form.defaultProps = {
   placeholder: '',
   maxLength: -1,
   pattern: '',
+  customStyle: {},
 };

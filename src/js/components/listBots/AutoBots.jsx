@@ -158,7 +158,11 @@ class AutoBots extends Component {
   }
 
   openGameScene(e, enableView, bot) {
-    StorageUtils.setUserItem(STORAGE_KEYS.junketId, 3);
+    const { data } = this.props;
+    const table = data.listTable.filter(listTable => listTable.id === bot.table_id);
+    if (bot.table_id) {
+      StorageUtils.setUserItem(STORAGE_KEYS.junketId, table[0].junket_id);
+    }
     e.stopPropagation();
     this.setState({ selectedBotInfo: bot }, () => {
       if (enableView) {
@@ -171,7 +175,6 @@ class AutoBots extends Component {
     const { selectedBotInfo } = this.state;
     const { fetchBotHistoryNow, listBotAction, updateNameTable } = this.props;
     const isOffBot = selectedBotInfo && selectedBotInfo.status === BOT_STATUSES.OFF;
-    console.log(this.props.fetchTableStatusNow);
     return (
       <ModalWrapper
         id="modal-view-mode"

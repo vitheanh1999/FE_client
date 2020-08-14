@@ -1,5 +1,6 @@
 import { CompanyInfo } from '../constants/login';
 import CustomCrypto from './CustomCrypto';
+import AutoSave from './AutoSave';
 
 const TOKEN_KEY = 'TOKEN_KEY';
 export const TOKEN_KEY_LUC88 = 'TOKEN_KEY_LUC888';
@@ -21,6 +22,9 @@ export const STORAGE_KEYS = {
   USER_ID_KEY: 'USER_ID_KEY',
   affiliateCode: 'affiliateCode',
   junketId: 'junketId',
+  autoSave: 'autoSave',
+  lastLoginAt: 'lastLoginAt',
+  hasAction: 'hasAction',
 };
 
 export default class StorageUtils {
@@ -124,6 +128,10 @@ export default class StorageUtils {
     StorageUtils.removeToken();
     StorageUtils.removeSectionStorageItem(STORAGE_KEYS.userRole);
     StorageUtils.removeSectionStorageItem(STORAGE_KEYS.userName);
+    StorageUtils.removeSectionStorageItem(STORAGE_KEYS.lastLoginAt);
+    if (AutoSave.instance) {
+      AutoSave.instance.deleteInstance();
+    }
   }
 
   static setUserItem(key, value) {

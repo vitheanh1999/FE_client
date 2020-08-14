@@ -235,7 +235,6 @@ class SignIn extends Component {
           name="password"
           marginBottom={isValidPassword ? 0.5 : 0}
           labelPaddingBottom={4}
-          maxLength={20}
           placeholder={i18n.t('password')}
           value={password}
         />

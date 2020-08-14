@@ -3,6 +3,7 @@
 import moment from 'moment';
 import dayjs from 'dayjs';
 import StorageUtils, { STORAGE_KEYS, TOKEN_KEY_LUC88 } from './StorageUtils';
+import api from '../services/api';
 // import i18n from '../i18n/i18n';
 
 export function isAndroid(userAgent = navigator.userAgent) {
@@ -158,16 +159,16 @@ export const convertPatternCampaign = (listPatterns, pattern, fieldName) => {
   listPatterns.forEach((element) => {
     if (
       element.status_fe
-      || (pattern[fieldName] === element[fieldName])
+      || (pattern[`${fieldName}_id`] === element.id)
     ) {
-      const text = context.measureText(element[fieldName]);
+      const text = context.measureText(element[`${fieldName}_name`]);
       if (text.width > maxWidth) {
         maxWidth = text.width;
       }
       patternOption.push({
         id: element.id,
         value: element.id,
-        text: element[fieldName],
+        text: element[`${fieldName}_name`],
         description: element.description,
       });
     }
@@ -200,7 +201,13 @@ export const convertCampaignOption = (data, maxWidth) => {
 export const convertTableOption = (data) => {
   const dataOption = [];
   data.forEach((element) => {
-    let color = element.status ? '#186f00' : '#adb5bd';
+    let color = ''; 
+    if(element.status === 1){
+       color = '#186f00'
+    }
+    else {
+       color = '#adb5bd'
+    }
     let isError = false;
     let isFull = false;
     if (element.is_full) {
@@ -235,7 +242,12 @@ export const handleAfterLogin = (data, email) => {
     StorageUtils.setSectionStorageItem(STORAGE_KEYS.USER_ID_KEY, data.auth_setting.id);
   }
 
+  if (data.user_id) {
+    StorageUtils.setSectionStorageItem(STORAGE_KEYS.USER_ID_KEY, data.user_id);
+  }
+
   StorageUtils.setSectionStorageItem(STORAGE_KEYS.userRole, data.role);
+  StorageUtils.setSectionStorageItem(STORAGE_KEYS.lastLoginAt, dayjs());
   // i18n.changeLanguage(languageCode);
   return null;
 };
@@ -254,7 +266,7 @@ export const getLanguageCurrent = () => {
     case 'en-US':
       return 'en';
     default:
-      return 'en';
+      return 'ja';
   }
 };
 
@@ -294,4 +306,19 @@ export const convertNumber = (value) => {
 export const convertBotRemainTime = (seconds, format = 'mm:ss') => {
   const time = moment.utc(seconds * 1000).format(format);
   return time;
+};
+
+export const refreshToken = (onError) => {
+  if (
+    dayjs().diff(StorageUtils.getSectionStorageItem(STORAGE_KEYS.lastLoginAt), 'm') > 15
+    && StorageUtils.getSectionStorageItem(STORAGE_KEYS.hasAction) === 'true'
+  ) {
+    api.create().refreshToken().then((res) => {
+      StorageUtils.setToken(res.data.access_token);
+      StorageUtils.setSectionStorageItem(STORAGE_KEYS.lastLoginAt, dayjs());
+      StorageUtils.setSectionStorageItem(STORAGE_KEYS.hasAction, false);
+    }).catch(() => {
+      onError();
+    });
+  }
 };

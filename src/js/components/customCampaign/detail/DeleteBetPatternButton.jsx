@@ -6,11 +6,12 @@ import { images } from '../../../theme';
 import Alert from '../../common/Alert/Alert';
 import { ButtonAction } from '../../campaign/campaignStyle';
 
-const onWarningDelete = () => {
+const onWarningDelete = (e) => {
   Alert.instance.showAlert(
     i18n.t('warning'),
     i18n.t('betPattern.cannotDelete'),
   );
+  e.stopPropagation();
 };
 
 class DeleteBetPatternButton extends Component {
@@ -20,13 +21,13 @@ class DeleteBetPatternButton extends Component {
   }
 
 
-  onDelete() {
+  onDelete(e) {
     const { betPatternInfo, handleDelete } = this.props;
-    const { id } = betPatternInfo;
+    const { id, bet_pattern_name } = betPatternInfo;
     Alert.instance.showAlertTwoButtons(
       i18n.t('warning'),
-      i18n.t('deleteBetPatternConfirm'),
-      [i18n.t('cancel'), i18n.t('ok')],
+      i18n.t('deleteBetPatternConfirm').replace('param', bet_pattern_name),
+      [i18n.t('cancel'), i18n.t('yes')],
       [
         () => Alert.instance.hideAlert(),
         () => {
@@ -36,10 +37,11 @@ class DeleteBetPatternButton extends Component {
       ],
       Alert.instance.hideAlert(),
     );
+    e.stopPropagation();
   }
 
   render() {
-    const { betPatternInfo } = this.props;
+    // const { betPatternInfo } = this.props;
     return (
       <ButtonAction
         fontSize="1em"
@@ -49,11 +51,7 @@ class DeleteBetPatternButton extends Component {
         borderRadiusor={2}
         color="#dc3545"
         height={2}
-        onClick={
-          betPatternInfo.count_campaign_use_bet > 0
-            ? () => onWarningDelete()
-            : () => this.onDelete()
-        }
+        onClick={e => this.onDelete(e)}
       >
         <img src={images.deleteIcon} alt="view mode" id="view-mode-btn" />
       </ButtonAction>
@@ -62,7 +60,7 @@ class DeleteBetPatternButton extends Component {
 }
 
 DeleteBetPatternButton.propTypes = {
-  betPatternInfo: PropTypes.object.isRequired,
+  // betPatternInfo: PropTypes.object.isRequired,
   handleDelete: PropTypes.func.isRequired,
 };
 

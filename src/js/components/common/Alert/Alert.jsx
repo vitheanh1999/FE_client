@@ -25,6 +25,7 @@ class Alert extends Component {
       orientation: getOrientation(),
       onAnimation: false,
       isShowBanUser: false,
+      alignMessage: 'center',
     };
 
     this.hideAlert = this.hideAlert.bind(this);
@@ -62,6 +63,18 @@ class Alert extends Component {
     };
     AlertStack.push(state);
     this.setState({ ...state });
+  }
+
+  setContent(message) {
+    this.setState({ message });
+  }
+
+  setTitle(title) {
+    this.setState({ title });
+  }
+
+  setContentAlign(alignMessage) {
+    this.setState({ alignMessage });
   }
 
   showAlertTwoButtons(title, message, buttonsText = defaultBtnsText,
@@ -116,7 +129,7 @@ class Alert extends Component {
   hideAlert() {
     AlertStack.pop();
     const oldAlert = AlertStack.get();
-    this.setState({ ...oldAlert });
+    this.setState({ ...oldAlert, alignMessage: 'center' });
   }
 
   renderButtons() {
@@ -151,10 +164,10 @@ class Alert extends Component {
 
   render() {
     const {
-      title, message, onClose,
+      title, message, onClose, alignMessage,
       orientation, isShow, onAnimation, isShowBanUser,
     } = this.state;
-    const width = orientation === ORIENT.HORIZONTAL ? '36em' : '80%';
+    const width = orientation === ORIENT.HORIZONTAL ? 'unset' : '80%';
 
     if (!isShow) {
       return null;
@@ -173,7 +186,7 @@ class Alert extends Component {
           />
           <Content>
             <Title>{(title && title.trim().length > 0) ? title : ''}</Title>
-            <Message>{(message && message.trim().length > 0) ? message.replace(/\\n/g, '\n') : ''}</Message>
+            <Message style={{ textAlign: alignMessage, width: '100%' }}>{(message && message.trim().length > 0) ? message.replace(/\\n/g, '\n') : ''}</Message>
             {
               isShowBanUser ? (
                 <div style={{ color: '#fff', whiteSpace: 'pre-wrap', textAlign: 'center' }}>

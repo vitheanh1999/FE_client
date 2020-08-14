@@ -8,7 +8,16 @@ import * as stepAuthActions from '../../actions/stepAuth';
 import SuperLogin from './SuperLogin';
 
 class Login extends SuperLogin {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.lang !== this.props.lang) {
+      this.forceUpdate();
+    }
+  }
 }
+
+const mapStateToProps = state => ({
+  lang: state.Language.lang,
+});
 
 Login.propTypes = {
   login: PropTypes.func.isRequired,
@@ -28,4 +37,4 @@ const mapDispatchToProps = dispatch => ({
   sendCode: bindActionCreators(stepAuthActions.sendCode, dispatch),
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

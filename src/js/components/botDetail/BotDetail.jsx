@@ -23,7 +23,7 @@ import GameScene from '../viewScreenGame/GameScene';
 import i18n from '../../i18n/i18n';
 import Spinner from '../common/Spinner';
 import BotDetailInfo from './BotDetailInfo';
-import PopupOnBot from '../common/PopupOnBot';
+import PopupOnBot from '../common/PopupOnBot/PopupOnBot';
 import { SpanRed, WrapperTimeUpdate } from '../revenue/RevenueStyle';
 
 export const DEPOSIT_STATUS = {

@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background: white;
+  background: ${props => (props.isDisable ? '#ccc' : '#fff')};
 `;
 
 const Content = styled.div`
@@ -26,21 +26,10 @@ export default class RadioButton extends Component {
 
   render() {
     const {
-      width, height, isChecked, onChange,
+      width, height, isChecked, onChange, isDisable,
     } = this.props;
-    if (onChange) {
-      return (
-        <Wrapper width={width} height={height} onClick={onChange}>
-          {
-            isChecked
-              ? <Content width={width / 3} height={height / 3} borderRadius={width / 6} />
-              : null
-          }
-        </Wrapper>
-      );
-    }
     return (
-      <Wrapper width={width} height={height}>
+      <Wrapper isDisable={isDisable} width={width} height={height} onClick={onChange && !isDisable ? onChange : null}>
         {
           isChecked
             ? <Content width={width / 3} height={height / 3} borderRadius={width / 6} />
@@ -56,6 +45,7 @@ RadioButton.defaultProps = {
   width: 18,
   isChecked: false,
   onChange: null,
+  isDisable: false,
 };
 
 RadioButton.propTypes = {
@@ -63,4 +53,5 @@ RadioButton.propTypes = {
   width: PropTypes.number,
   isChecked: PropTypes.bool,
   onChange: PropTypes.func,
+  isDisable: PropTypes.bool,
 };

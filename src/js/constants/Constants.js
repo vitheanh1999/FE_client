@@ -21,7 +21,7 @@ export const TAB = {
   },
   REVENUE: {
     name: i18n.t('revenueGC'),
-    key: 'revenue',
+    key: 'revenueGC',
     subTitle: '',
     value: 3,
     isShow: true,
@@ -94,6 +94,7 @@ export const TAB = {
 export const PER_PAGE = 10;
 export const PER_PAGE_BOT_OFF = 18;
 export const DEFAULT_DATE_DIFF = 9;
+export const NUMBER_DATE_SHOW_REVENUE = 90;
 export const ALL_PAGE = 100;
 
 export const NUMBER_GC_FOR_BOT = 1000000;
@@ -163,4 +164,10 @@ export const VIDEO_QUALYTIES = {
 export const ZoomState = {
   zoomOut: 'out',
   zoomIn: 'in',
+};
+
+export const TableStatus = {
+  Off: 0,
+  On: 1,
+  Waiting: 2,
 };

@@ -9,7 +9,7 @@ import {
   Row, FieldText, Title,
 } from '../campaign/campaignStyle';
 import {
-  WrapperListItem, ListInformation,
+  WrapperListItem, ListInformation, ListDescription, Description,
 } from '../common/CommonStyle';
 import DeleteLogicPatternButton from './DeleteLogicPatternButton';
 
@@ -22,12 +22,25 @@ const NumberLogic = styled.span`
 
 export const renderField = (name, number, value) => (
   <Row>
-    <FieldText>{name.concat(':')}</FieldText>
+    <FieldText>{name.concat('：')}</FieldText>
     <NumberLogic>{number}</NumberLogic>
-    <FieldText style={{ marginLeft: 'unset' }}>{value}</FieldText>
+    <FieldText style={{ marginLeft: 'unset', }}>{value}</FieldText>
   </Row>
 );
+
 class LogicPatternItem extends PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      statusContent: true,
+    };
+  }
+
+  changeContent() {
+    const { statusContent } = this.state;
+    this.setState({ statusContent: !statusContent });
+  }
+
   renderAction() {
     const { logicPatternInfo, handleDelete, showPopupDetail } = this.props;
     const buttonDelete = ENABLE_DELETE_CAMPAIGN && (
@@ -36,7 +49,6 @@ class LogicPatternItem extends PureComponent {
         logicPatternInfo={logicPatternInfo}
       />
     );
-
     return (
       <Fragment>
         <ButtonAction
@@ -47,7 +59,10 @@ class LogicPatternItem extends PureComponent {
           margin="0 1em 0.7em 0"
           color="#2d889c"
           height={2}
-          onClick={() => showPopupDetail(logicPatternInfo)}
+          onClick={e => showPopupDetail(
+            e, logicPatternInfo, logicPatternInfo.count_bot_off_use_logic,
+            logicPatternInfo.count_bot_on_use_logic,
+          )}
         >
           {isMobile || i18n.t('edit')}
           <Image src={images.edit2} alt="" />
@@ -59,23 +74,38 @@ class LogicPatternItem extends PureComponent {
 
   render() {
     const { logicPatternInfo } = this.props;
+    const { statusContent } = this.state;
 
     return (
-      <WrapperListItem>
-        <ListInformation>
-          <Title>{logicPatternInfo.logic_pattern_name}</Title>
-          {renderField(
-            i18n.t('betPattern.numberCampaignUsed'),
-            logicPatternInfo.count_campaign_use_logic,
-            i18n.t('betPattern.amountCampaign'),
-          )}
+      <WrapperListItem onClick={() => this.changeContent()}>
+        {
+            statusContent
+              ? (
+                <ListInformation>
+                  <Title>{logicPatternInfo.logic_pattern_name}</Title>
+                  {renderField(
+                    i18n.t('betPattern.numberCampaignUsed'),
+                    logicPatternInfo.count_campaign_use_logic,
+                    i18n.t('betPattern.amountCampaign'),
+                  )}
 
-          {renderField(
-            i18n.t('betPattern.numberBotUsed'),
-            logicPatternInfo.count_bot_on_use_logic,
-            i18n.t('betPattern.amountBot'),
-          )}
-        </ListInformation>
+                  {renderField(
+                    i18n.t('betPattern.numberBotUsed'),
+                    logicPatternInfo.count_bot_on_use_logic,
+                    i18n.t('betPattern.amountBot'),
+                  )}
+                </ListInformation>
+              )
+              : (
+                <ListDescription>
+                  <Title>{logicPatternInfo.logic_pattern_name}</Title>
+                  <Description>
+                    {logicPatternInfo.description}
+                  </Description>
+                </ListDescription>
+              )
+          }
+
         <WrapperAction>
           {this.renderAction()}
         </WrapperAction>

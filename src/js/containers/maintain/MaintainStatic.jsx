@@ -110,9 +110,6 @@ class MaintainStatic extends Component {
         <Alert />
         <LightningTop src={images.topLightning} />
         <LightningBot src={images.bottomLightning} />
-        {
-          ENABLE_NEWS && <ListNewsPublic fontSize={fontSize} isMobile={isMobile} />
-        }
       </Wrapper>
     );
   }

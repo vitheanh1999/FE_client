@@ -21,6 +21,7 @@ import images from '../../../assets/images';
 import ListNewsPublic from '../news/ListNewsPublic';
 import Login from '../login/Login';
 import { ENABLE_NEWS } from '../../config/localConfig';
+import { connect } from 'react-redux';
 
 const MAINTAIN_STATUS = {
   NoMaintain: 0,
@@ -59,6 +60,12 @@ class Lightning extends NotFound {
     registerMaintainPush(this.socket);
     window.addEventListener('resize', this.onResize);
     this.props.history.replace('', null);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.lang !== this.props.lang) {
+      this.forceUpdate();
+    }
   }
 
   componentWillUnmount() {
@@ -153,8 +160,12 @@ class Lightning extends NotFound {
   }
 }
 
+const mapStateToProps = state => ({
+  lang: state.Language.lang,
+});
+
 Lightning.propTypes = {
   history: PropTypes.oneOfType([PropTypes.object, PropTypes.number]).isRequired,
 };
 
-export default Lightning;
+export default connect(mapStateToProps, null)(Lightning);

@@ -16,14 +16,14 @@ export const GET_SETTING_WORKER = 'GET_SETTING_WORKER';
 
 export const LOGIC_PATTERN_DEFAULT_DATA = [{
   card_no: 1,
-  bet_point: 0,
-  win_next: 1,
-  lose_next: 1,
+  bet_point: '',
+  win_next: '',
+  lose_next: '',
 }];
 
 export const BET_PATTERN_DEFAULT_DATA = [{
   card_no: 1,
   bet_value: 'B',
-  win_next: 1,
-  lose_next: 1,
+  win_next: '',
+  lose_next: '',
 }];

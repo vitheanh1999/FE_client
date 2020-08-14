@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import colors from '../../theme/colors';
+import i18n from '../../i18n/i18n';
 
 const Blank = styled.div`
   height: ${props => props.height}em;
@@ -134,7 +135,7 @@ class TabItem extends Component {
             fontSize={fontSize}
             isActive={active}
           >
-            {title}
+            {i18n.t(title)}
           </Title>
           { /* <SubTitle>{subTitle}</SubTitle> */}
         </TitleWrapper>

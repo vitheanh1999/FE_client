@@ -125,6 +125,8 @@ import describe3 from '../../assets/imgs/describe/describe3.jpg';
 import describeTitle3 from '../../assets/imgs/describe/describeTitle3.png';
 import noteRed from '../../assets/imgs/describe/noteRed.png';
 
+import requiredIcon from '../../assets/imgs/icons/requiredIcon.png';
+
 import guide1 from '../../assets/imgs/guide/FH-1.jpg';
 import guide2 from '../../assets/imgs/guide/FH-2.jpg';
 import guide3 from '../../assets/imgs/guide/FH-3.jpg';
@@ -136,6 +138,12 @@ import guide8 from '../../assets/imgs/guide/FH-8.jpg';
 import guide9 from '../../assets/imgs/guide/FH-9.jpg';
 import guide10 from '../../assets/imgs/guide/FH-10.jpg';
 import guide11 from '../../assets/imgs/guide/FH-11.jpg';
+
+import guideSetting1 from '../../assets/imgs/guide/guide-setting1.jpg';
+import guideSetting2 from '../../assets/imgs/guide/guide-setting2.jpg';
+import guideSetting3 from '../../assets/imgs/guide/guide-setting3.jpg';
+import guideSetting4 from '../../assets/imgs/guide/guide-setting4.jpg';
+import guideSetting5 from '../../assets/imgs/guide/guide-setting5.jpg';
 
 import iconOffRed from '../../assets/imgs/icons/iconOffRed.png';
 import iconOffWhite from '../../assets/imgs/icons/iconOffWhite.png';
@@ -170,6 +178,11 @@ const guide = {
   guide9,
   guide10,
   guide11,
+  guideSetting1,
+  guideSetting2,
+  guideSetting3,
+  guideSetting4,
+  guideSetting5,
 };
 
 const countryFlag = {
@@ -294,6 +307,7 @@ const images = {
   appleTouchIconExtra5,
   maintainFEBackground,
   iconOffReason,
+  requiredIcon,
 };
 
 export default images;

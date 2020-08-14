@@ -34,7 +34,7 @@ export default class ApiErrorUtils {
       if (message === 'dashboard-account.') {
         alert.showAlert(i18n.t('error'), i18n.t('Unauthenticated.'), i18n.t('OK'), () => redirectToLogin(), () => redirectToLogin());
       } else {
-        alert.showAlert(i18n.t('error'), message, i18n.t('OK'), () => alert.hideAlert());
+        alert.showAlert(i18n.t('error'), message, i18n.t('close'), () => alert.hideAlert());
       }
     } else if (code === 405) {
       alert.showBanUser();
@@ -64,7 +64,9 @@ export default class ApiErrorUtils {
           textContent = textContent.replace(detectDateTime[i], moment(detectDateTime[i]).add(moment().utcOffset(), 'm').format('DD日 HH:mm'));
         }
       }
+
       alert.showAlert(i18n.t('error'), textContent, i18n.t('OK'), () => alert.hideAlert());
+
       if (onError) {
         onError();
       }

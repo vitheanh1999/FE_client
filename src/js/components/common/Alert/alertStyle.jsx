@@ -30,7 +30,7 @@ export const Wrapper = styled.div`
 export const AlertStyled = styled.div`
   position: relative;
   padding: 1.9em 0;
-  min-width: 25%;
+  min-width: 36em;
   max-width: ${props => props.maxWidth || '80%'};
   background-color: #000;
   display: flex;
@@ -59,7 +59,7 @@ export const Content = styled.div`
   align-items: center;
   flex-direction: column;
   display: flex;
-  padding: ${props => (props.padding ? props.padding : '1.9em')} ;
+  padding: ${props => (props.padding ? props.padding : '1.9em')};
 `;
 
 export const Title = styled.p`
@@ -79,6 +79,7 @@ export const Message = styled.p`
   padding: 0;
   font-size: ${props => props.fontSize || 1}em;
   font-weight: ${props => props.fontWeight};
+  letter-spacing: normal;
 `;
 
 export const ButtonWrapper = styled.div`

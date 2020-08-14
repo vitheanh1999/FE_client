@@ -13,13 +13,13 @@ import {
   Image, KeyName, KeyNameText,
   RightSideGroup, TotalGCText,
   getReasonTurnOff, IconViewMode,
-  WrapperSpan,
+  WrapperSpan, TableText,
 } from './listBotsStyle';
 import {
   WrapperListItem, WrapperList,
   ListInformation, WrapperPaginationCustom,
 } from '../common/CommonStyle';
-import PopupOnBot from '../common/PopupOnBot';
+import PopupOnBot from '../common/PopupOnBot/PopupOnBot';
 import InfoRemainTime from './InfoRemainTime';
 import Countdown from '../common/Countdown';
 import StyleNumber from '../StyleNumber';
@@ -127,9 +127,19 @@ class BotItem extends Component {
               </TotalGCText>
             ) : ''
           }
+          {
+            bot.table_name_display && (
+              <TableText
+                fontSize="0.8em"
+              >
+                {i18n.t('tableText')} : {bot.table_name_display}
+              </TableText>
+            )
+          }
           <TotalGCText isRed={bot.GC < 0} id="auto-gc" fontSize="1.2em">
             {i18n.t('gc')} : <WrapperSpan><StyleNumber value={bot.GC} afterDot={2} color="#fff" /></WrapperSpan>
           </TotalGCText>
+
           <InfoRemainTime
             bot={bot}
             data={data}
@@ -166,6 +176,7 @@ class BotItem extends Component {
             : 0
         }
         renderTime={data => this.renderBot(bot, customStyle, data)}
+        key={bot.id}
       />
     ));
     return (

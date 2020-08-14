@@ -84,6 +84,12 @@ class Maintain extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.lang !== this.props.lang) {
+      this.forceUpdate();
+    }
+  }
+
   componentWillUnmount() {
     cancelPusherMaintain(this.socket);
     window.removeEventListener('resize', this.onResize);
@@ -199,6 +205,7 @@ Maintain.propTypes = {
 
 const mapStateToProps = state => ({
   maintainInfo: state.Maintain,
+  lang: state.Language.lang,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -337,29 +337,9 @@ class SuperGameScene extends Component {
     startTurn.bind(`turn-${nameTb}`, (event) => {
       if (event.turn.table_name === nameTb) {
         const TurnID = event.turn && event.turn.turn_id;
-        if (TurnID >= 0) {
           this.setState({
-            startDeal: true,
-            confirmBetData: {},
             turnId: TurnID,
-            totalBet: dataDefaultBet,
-            statusBetText: 'placeYourBet',
           });
-          this.woodPlaneRef.current.closeToast(FREEZE_MESS_BET);
-        } else {
-          this.setState({
-            startDeal: false,
-            confirmBetData: {},
-            turnId: TurnID,
-            totalBet: dataDefaultBet,
-            statusBetText: i18n.t('noMoreBet'),
-          });
-          this.woodPlaneRef.current.getWrappedInstance().showToast(
-            'freezeBetting',
-            100000000000000,
-            FREEZE_MESS_BET,
-          );
-        }
       }
     });
   }

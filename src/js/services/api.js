@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API } from '../config';
-import StorageUtils, { TOKEN_KEY_LUC88 } from '../helpers/StorageUtils';
+import StorageUtils, { TOKEN_KEY_LUC88, STORAGE_KEYS } from '../helpers/StorageUtils';
 import { TABS } from '../components/customCampaign/CardNoTable';
 
 const create = (baseUrl = null) => {
@@ -46,9 +46,11 @@ const create = (baseUrl = null) => {
   );
 
   const generateGet = (path, params = null) => {
+    const userId = StorageUtils.getSectionStorageItem(STORAGE_KEYS.USER_ID_KEY);
     const options = {
       headers: {
         Authorization: `Bearer ${StorageUtils.getToken()}`,
+        'X-AUTH-ID': userId || '0',
         params,
       },
     };
@@ -56,18 +58,22 @@ const create = (baseUrl = null) => {
   };
 
   const generatePost = (path, params) => {
+    const userId = StorageUtils.getSectionStorageItem(STORAGE_KEYS.USER_ID_KEY);
     const options = {
       headers: {
         Authorization: `Bearer ${StorageUtils.getToken()}`,
+        'X-AUTH-ID': userId || '0',
       },
     };
     return sendPost(path, params, options);
   };
 
   const generatePut = (path, params) => {
+    const userId = StorageUtils.getSectionStorageItem(STORAGE_KEYS.USER_ID_KEY);
     const options = {
       headers: {
         Authorization: `Bearer ${StorageUtils.getToken()}`,
+        'X-AUTH-ID': userId || '0',
       },
     };
     return sendPut(path, params, options);
@@ -75,9 +81,11 @@ const create = (baseUrl = null) => {
 
 
   const generatePostLUC = (path, params) => {
+    const userId = StorageUtils.getSectionStorageItem(STORAGE_KEYS.USER_ID_KEY);
     const options = {
       headers: {
         Authorization: `Bearer ${StorageUtils.getSectionStorageItem(TOKEN_KEY_LUC88)}`,
+        'X-AUTH-ID': userId || '0',
       },
     };
     return sendPost(path, params, options);

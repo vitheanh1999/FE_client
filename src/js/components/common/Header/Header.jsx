@@ -4,13 +4,15 @@ import styled from 'styled-components';
 import { Button } from 'react-bootstrap';
 import ApiErrorUtils from '../../../helpers/ApiErrorUtils';
 import Alert from '../Alert/Alert';
-import { ENABLE_LOGIN } from '../../../config';
+import { ENABLE_LOGIN, ENABLE_CHANGE_LANGUAGE } from '../../../config';
 import StorageUtils, { STORAGE_KEYS } from '../../../helpers/StorageUtils';
 import i18n from '../../../i18n/i18n';
 import { getCompanyInfo } from '../../login/SignIn';
 import { changeMinDate } from '../../../constants/Constants';
 import { ORIENTATION } from '../../../helpers/system';
 import images from '../../../../assets/images';
+import { LANGUAGE } from '../../../constants/language';
+import ChangeLanguage from '../../../containers/changeLanguage/ChangeLanguage';
 
 const UserId = styled.div`
   height: 1.25em;
@@ -62,10 +64,21 @@ const MenuIcon = styled.img`
   }
 `;
 
+const SelectLangWrapper = styled.div`
+  z-index: 1;
+  margin-right: 5px;
+`;
+
+const Img = styled.img`
+  width: 3em;
+  border-radius: 0.3em;
+`;
+
 class Header extends Component {
   constructor() {
     super();
     this.state = {
+      isShow: false,
     };
 
     this.onSuccess = this.onSuccess.bind(this);
@@ -112,12 +125,19 @@ class Header extends Component {
     const {
       tabInfo, orient, openMenu,
     } = this.props;
+    const { isShow } = this.state;
     let title = '';
     let canLogout = true;
     title = tabInfo.name;
     canLogout = ENABLE_LOGIN;
     const checkLandscape = (orient === ORIENTATION.Landscape);
 
+    const currentLang = StorageUtils.getItem('i18nextLng');
+    const index = LANGUAGE.findIndex(item => item.value === currentLang.substr(0, 2));
+    let flag = LANGUAGE[1].icon;
+    if (index !== -1) {
+      flag = LANGUAGE.find(item => item.value === currentLang.substr(0, 2)).icon;
+    }
     return (
       <HeaderWrapper>
         <HeaderContent>
@@ -129,6 +149,13 @@ class Header extends Component {
             checkLandscape
               ? (
                 <Account>
+                  {
+                    ENABLE_CHANGE_LANGUAGE && (
+                      <SelectLangWrapper onClick={() => this.setState({ isShow: true })}>
+                        <Img src={flag} />
+                      </SelectLangWrapper>
+                    )
+                  }
                   <UserId>
                     {StorageUtils.getSectionStorageItem(STORAGE_KEYS.userName)}
                   </UserId>
@@ -148,6 +175,7 @@ class Header extends Component {
               : <MenuIcon src={images.iconMenu} alt="" onClick={openMenu} />
           }
         </HeaderContent>
+        <ChangeLanguage isShow={isShow} onClose={() => this.setState({ isShow: false })} />
       </HeaderWrapper>
     );
   }

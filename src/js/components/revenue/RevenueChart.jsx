@@ -86,7 +86,7 @@ class RevenueChart extends Component {
 
   render() {
     const {
-      startDate, endDate, gc, labels, updateAt,
+      startDate, endDate, minDate, gc, labels, updateAt,
     } = this.props;
     const { isValid } = this.state;
     const updatedDate = convertToLocalTime(updateAt);
@@ -172,29 +172,35 @@ class RevenueChart extends Component {
     return (
       <WrapperChart>
         <WrapperDatePicker isMobile={isMobile}>
-          <WrapperDate>
-            <span>{i18n.t('dateRange')}(UTC)</span>
-            <div>
-              <DatePickerCustom
-                selected={convertDayjsToDate(startDate)}
-                dateFormat="yyyy-MM-dd"
-                onChange={value => this.handleChangeDate('startDate', value)}
-                maxDate={convertDayjsToDate(endDate)}
-              />
-              {!isValid.startDate && <ErrorText>{i18n.t('fieldRequired')}</ErrorText>}
-            </div>
-            ~
-            <div>
-              <DatePickerCustom
-                selected={convertDayjsToDate(endDate)}
-                dateFormat="yyyy-MM-dd"
-                onChange={value => this.handleChangeDate('endDate', value)}
-                minDate={convertDayjsToDate(startDate)}
-                maxDate={convertDayjsToDate(dayjs.utc().format(FORMAT_DATE_TIME))}
-              />
-              {!isValid.endDate && <ErrorText>{i18n.t('fieldRequired')}</ErrorText>}
-            </div>
-          </WrapperDate>
+          <div>
+            <WrapperDate>
+              <span>{i18n.t('dateRange')}(UTC)</span>
+              <div>
+                <DatePickerCustom
+                  selected={convertDayjsToDate(startDate)}
+                  dateFormat="yyyy-MM-dd"
+                  onChange={value => this.handleChangeDate('startDate', value)}
+                  minDate={convertDayjsToDate(minDate)}
+                  maxDate={convertDayjsToDate(endDate)}
+                />
+                {!isValid.startDate && <ErrorText>{i18n.t('fieldRequired')}</ErrorText>}
+              </div>
+              ~
+              <div>
+                <DatePickerCustom
+                  selected={convertDayjsToDate(endDate)}
+                  dateFormat="yyyy-MM-dd"
+                  onChange={value => this.handleChangeDate('endDate', value)}
+                  minDate={convertDayjsToDate(startDate)}
+                  maxDate={convertDayjsToDate(dayjs.utc().format(FORMAT_DATE_TIME))}
+                />
+                {!isValid.endDate && <ErrorText>{i18n.t('fieldRequired')}</ErrorText>}
+              </div>
+            </WrapperDate>
+            <SpanRed marginTop={0.3}>
+              <span>{i18n.t('revenueTimeShow')}</span>
+            </SpanRed>
+          </div>
           <div>
             <SpanRed marginTop={1}>{i18n.t('lastTimeUpdated')}</SpanRed>
             <SpanRed isMobile={isMobile} marginLeft={1}>
@@ -237,6 +243,7 @@ RevenueChart.propTypes = {
   labels: PropTypes.array.isRequired,
   startDate: PropTypes.string.isRequired,
   endDate: PropTypes.string.isRequired,
+  minDate: PropTypes.string.isRequired,
   onChangeDate: PropTypes.func.isRequired,
   updateAt: PropTypes.string,
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 // import colors from '../../../theme/colors';
-import { element } from 'prop-types';
+// import { element } from 'prop-types';
 import images from '../../../../assets/images';
 import i18n from '../../../i18n/i18n';
 
@@ -18,6 +18,14 @@ export const Row = styled.div`
   align-items: center;
 `;
 
+export const WrapperTable = styled.div`
+  width: 100%;
+  position: relative;
+  margin-left: 1em;
+  margin-right: 1em;
+  box-sizing: border-box;
+`;
+
 export const Wrapper = styled(Row)`
   width: 100%;
   border-bottom: 1px solid #808080ab;
@@ -31,6 +39,7 @@ export const TitleGroup = styled.span`
   font-size: 1em;
   font-weight: bold;
   width: ${props => (props.width ? `${props.width}em` : 'unset')};
+  white-space: pre-wrap;
 `;
 
 export const TitleField = styled.div`
@@ -110,4 +119,15 @@ export const PointRateNote = styled.div`
   margin-left: 2em;
   width: ${props => (props.width ? `${props.width}em` : 'unset')};
   color: #e07418;
+`;
+
+export const WrapperArea = styled.div`
+  border: 1px solid gray;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  margin-left: 1em;
+  ${props => props.portraitMode && 'margin-right: 1em;'}
+  padding-top: 1em;
+  padding-bottom: 1em;
+  background-color: #212121;
 `;

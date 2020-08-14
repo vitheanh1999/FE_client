@@ -1,19 +1,20 @@
-import React, { Component } from 'react';
+/* eslint-disable react/sort-comp */
+import React, { Component, createRef } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Pagination from 'rc-pagination';
 import Alert from '../../components/common/Alert/Alert';
 import ApiErrorUtils from '../../helpers/ApiErrorUtils';
 import * as customCampaignAction from '../../actions/customCampaign';
 import {
-  ContentContainer, ContentHeader, MedianStrip, ContentBody, ModalWrapper, ModalHeaderCustom,
+  ContentContainer, ContentHeader, MedianStrip, ContentBody, ModalHeaderCustom,
   WrapperPaginationCustom,
 } from '../../components/common/CommonStyle';
 import i18n from '../../i18n/i18n';
 import { ButtonAddCampaign, IconAdd, Blank } from '../../components/campaign/campaignStyle';
 import images from '../../theme/images';
+import helpImages from '../../../assets/images';
 import TabMenu from '../../components/campaign/detail/TabMenu';
 import ListLogicPattern from '../../components/customCampaign/ListLogicPattern';
 import ListBetPattern from '../../components/customCampaign/ListBetPattern';
@@ -21,43 +22,124 @@ import PopUpDetail from '../../components/customCampaign/PopUpDetail';
 import { TABS } from '../../components/customCampaign/CardNoTable';
 import Spinner from '../../components/common/Spinner';
 import { PER_PAGE } from '../../constants/Constants';
-
-const Content = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
-const listTabs = Object.values(TABS);
+import Keyboard from '../../components/keyboard/Keyboard';
+import PopUpHelp from '../../components/customCampaign/PopUpHelp';
+import {
+  ModalWrapper, Icon, Content,
+  TitleWrapper, listTabs,
+  getPopupDetailFontSize,
+} from './customCampaignStyle';
+import AutoSave, { AUTO_SAVE_KEY } from '../../helpers/AutoSave';
 
 class CustomCampaign extends Component {
   constructor(props) {
     super(props);
 
+    if (!AutoSave.instance) {
+      this.autoSave = new AutoSave();
+    } else {
+      this.autoSave = AutoSave.instance;
+    }
+    const currentTabId = TABS.LIST_LOGIC_BET.id;
+    const isShowModalDetail = false;
+    const selectTedId = null;
+
     this.state = {
-      currentTabId: TABS.LIST_LOGIC_BET.id,
-      isShowModalDetail: false,
-      selectTedId: null,
+      currentTabId,
+      isShowModalDetail,
+      selectTedId,
       isLoading: false,
       settingWorkerData: {},
       currentPage: 1,
+      isShowHelp: false,
+      totalBotOffInData: 0,
+      totalBotOnInData: 0,
+      marginBottomPopupDetail: 0,
     };
 
     [
       'changeTab', 'closeCampaignDetail', 'showPopupDetail', 'onSuccess', 'onError',
       'fetchListLogicSetting', 'fetchSettingWorkerSuccess', 'fetchListBetPatternCustom',
-      'onChangePage',
+      'onChangePage', 'onChangePageSuccess',
     ].forEach((method) => {
       this[method] = this[method].bind(this);
+    });
+    this.onResize = this.onResize.bind(this);
+    this.onOrientationChange = this.onOrientationChange.bind(this);
+    this.popUpDetailRef = createRef();
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('orientationchange', this.onOrientationChange);
+  }
+
+  checkDraftData() {
+    let isShowModalDetail = false;
+    let selectTedId = null;
+    if (this.autoSave.checkDraft(AUTO_SAVE_KEY.popupDetail)) {
+      isShowModalDetail = true;
+      const contentDraft = this.autoSave.getDraftContent(AUTO_SAVE_KEY.popupDetail);
+      selectTedId = contentDraft.dataInfoPopup ? contentDraft.dataInfoPopup.id : null;
+      if (contentDraft.dataInfoPopup.logic_pattern_name !== undefined) {
+        this.changeTab(TABS.LIST_LOGIC_BET.id);
+      }
+      if (contentDraft.dataInfoPopup.bet_pattern_name !== undefined) {
+        this.changeTab(TABS.LIST_BET_PATTERN.id);
+      }
+    }
+    this.setState({
+      isShowModalDetail,
+      selectTedId,
     });
   }
 
   componentDidMount() {
     this.fetchSettingWorker();
+    if (this.autoSave.checkDraft(AUTO_SAVE_KEY.popupDetail)) {
+      Alert.instance.showAlertTwoButtons(
+        i18n.t('warning'),
+        i18n.t('settingLogic.draft.ask'),
+        [i18n.t('cancel'), i18n.t('yes')],
+        [
+          () => {
+            Alert.instance.hideAlert();
+            this.autoSave.deleteDraft();
+          },
+          () => {
+            Alert.instance.hideAlert();
+            this.checkDraftData();
+          },
+        ],
+        () => {
+          Alert.instance.hideAlert();
+          this.autoSave.deleteDraft();
+        },
+      );
+    }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    this.autoSave = null;
+  }
+
+  onOrientationChange() {
+    this.setState({});
+  }
+
+  onResize() {
+    this.setState({});
   }
 
   onSuccess(data) {
     ApiErrorUtils.handleServerError(data, Alert.instance, () => {
       this.setState({ isLoading: false });
+    });
+  }
+
+  onChangePageSuccess(data) {
+    ApiErrorUtils.handleServerError(data, Alert.instance, () => {
+      this.setState({ isLoading: false });
+      const element = document.getElementById('WrapperContent');
+      if (element) element.scrollTop = 0;
     });
   }
 
@@ -77,14 +159,35 @@ class CustomCampaign extends Component {
       { currentPage: page, isLoading: true },
       () => {
         if (currentTabId === TABS.LIST_LOGIC_BET.id) {
-          this.fetchListLogicSetting(page);
-        } else this.fetchListBetPatternCustom(page);
+          this.fetchListLogicSetting(page, true);
+        } else this.fetchListBetPatternCustom(page, true);
       },
     );
   }
 
-  closeCampaignDetail() {
-    this.setState({ isShowModalDetail: false, selectTedId: null });
+  closeCampaignDetail(isNotSave = true) {
+    Keyboard.instance.hideKeyboard();
+    if (isNotSave && this.state.totalBotOnInData === 0) {
+      Alert.instance.showAlertTwoButtons(
+        i18n.t('warning'),
+        i18n.t('customCampaign.closePopup'),
+        [i18n.t('cancel'), i18n.t('yes')],
+        [
+          () => {
+            Alert.instance.hideAlert();
+          },
+          () => {
+            this.setState({ isShowModalDetail: false, selectTedId: null });
+            Alert.instance.hideAlert();
+            AutoSave.instance.deleteDraft();
+          },
+        ],
+      );
+    } else {
+      this.setState({ isShowModalDetail: false, selectTedId: null });
+      Alert.instance.hideAlert();
+      AutoSave.instance.deleteDraft();
+    }
   }
 
   changeTab(tabId) {
@@ -93,8 +196,14 @@ class CustomCampaign extends Component {
     });
   }
 
-  showPopupDetail(dataPopup) {
-    this.setState({ isShowModalDetail: true, selectTedId: dataPopup.id });
+  showPopupDetail(e, dataPopup, totalBotOffInData, totalBotOnInData) {
+    this.setState({
+      isShowModalDetail: true,
+      selectTedId: dataPopup.id,
+      totalBotOffInData,
+      totalBotOnInData,
+    });
+    e.stopPropagation();
   }
 
   fetchSettingWorker() {
@@ -111,54 +220,81 @@ class CustomCampaign extends Component {
     });
   }
 
-  fetchListLogicSetting(currPage = 1) {
+  fetchListLogicSetting(currPage = 1, willScrollTop = false) {
     this.setState({
       isLoading: true,
     });
     const { currentPage } = this.state;
     const { actions } = this.props;
-    actions.customCampaignAction.fetchListLogicSetting(this.onSuccess, this.onError, {
-      currentPage: currPage || currentPage, perPage: PER_PAGE,
-    });
+    actions.customCampaignAction.fetchListLogicSetting(
+      willScrollTop ? this.onChangePageSuccess : this.onSuccess,
+      this.onError,
+      {
+        currentPage: currPage || currentPage, perPage: PER_PAGE,
+      },
+    );
     this.setState({ currentPage: currPage });
   }
 
-  fetchListBetPatternCustom(currPage = 1) {
+  fetchListBetPatternCustom(currPage = 1, willScrollTop = false) {
     this.setState({
       isLoading: true,
     });
     const { currentPage } = this.state;
     const { actions } = this.props;
-    actions.customCampaignAction.fetchListBetPatternCustom(this.onSuccess, this.onError, {
-      currentPage: currPage || currentPage, perPage: PER_PAGE,
-    });
+    actions.customCampaignAction.fetchListBetPatternCustom(
+      willScrollTop ? this.onChangePageSuccess : this.onSuccess,
+      this.onError,
+      {
+        currentPage: currPage || currentPage, perPage: PER_PAGE,
+      },
+    );
     this.setState({ currentPage: currPage });
+  }
+
+  setMarginBottomPopupDetail(value) {
+    this.setState({ marginBottomPopupDetail: value });
   }
 
   renderModalDetail() {
     const {
-      isShowModalDetail, currentTabId, settingWorkerData, selectTedId, currentPage,
+      isShowModalDetail, currentTabId,
+      settingWorkerData, selectTedId,
+      currentPage, totalBotOffInData, totalBotOnInData,
+      isShowHelp, marginBottomPopupDetail,
     } = this.state;
     const {
-      isMobile, fontSize, actions,
+      isMobile, actions, // fontSize
     } = this.props;
+    const fontSize = getPopupDetailFontSize();
     let title = '';
     if (currentTabId === TABS.LIST_LOGIC_BET.id) {
-      title = selectTedId ? i18n.t('customCampaign.logicPatternDetail') : i18n.t('customCampaign.addALogicPattern');
+      title = selectTedId ? i18n.t('customCampaign.logicPatternDetail') : i18n.t('customCampaign.createLogic');
     } else {
-      title = selectTedId ? i18n.t('customCampaign.betPatternDetail') : i18n.t('customCampaign.addABetPattern');
+      title = selectTedId ? i18n.t('customCampaign.betPatternDetail') : i18n.t('customCampaign.createBet');
     }
     return (
       <ModalWrapper
         id="DetailModal"
         isOpen={isShowModalDetail}
         centered
-        isMobile={isMobile}
+        fontSize={fontSize}
+        marginBot={marginBottomPopupDetail}
       >
-        <ModalHeaderCustom toggle={this.closeCampaignDetail}>
-          {title}
+        <ModalHeaderCustom toggle={() => this.closeCampaignDetail(this.popUpDetailRef.current.checkChangeData())}>
+          <TitleWrapper>
+            {title}
+            <Icon
+              src={isShowHelp ? helpImages.iconHelpSelected : helpImages.iconHelpNormal}
+              onClick={() => {
+                Keyboard.instance.hideKeyboard();
+                this.setState({ isShowHelp: true });
+              }}
+            />
+          </TitleWrapper>
         </ModalHeaderCustom>
         <PopUpDetail
+          ref={this.popUpDetailRef}
           isMobile={isMobile}
           fontSize={fontSize}
           selectTedId={selectTedId}
@@ -181,6 +317,9 @@ class CustomCampaign extends Component {
               : actions.customCampaignAction.getDetailBetPattern
           }
           currentPage={currentPage}
+          totalBotOffInData={totalBotOffInData}
+          totalBotOnInData={totalBotOnInData}
+          changeMarginBottom={value => this.setMarginBottomPopupDetail(value)}
         />
       </ModalWrapper>
     );
@@ -191,7 +330,7 @@ class CustomCampaign extends Component {
       data, actions,
     } = this.props;
     const {
-      currentTabId, isShowModalDetail, settingWorkerData, currentPage,
+      currentTabId, isShowModalDetail, settingWorkerData, currentPage, isShowHelp,
     } = this.state;
     const totalRecord = currentTabId === TABS.LIST_LOGIC_BET.id
       ? data.totalLogicSetting : data.totalBetPattern;
@@ -207,8 +346,8 @@ class CustomCampaign extends Component {
             {`
             ${i18n.t('total')}: 
             ${currentTabId === TABS.LIST_LOGIC_BET.id
-                ? data.totalLogicSetting
-                : data.totalBetPattern}
+              ? data.totalLogicSetting
+              : data.totalBetPattern}
             `}
             {
               (
@@ -222,7 +361,12 @@ class CustomCampaign extends Component {
                 ? (
                   <ButtonAddCampaign
                     onClick={
-                      () => this.setState({ isShowModalDetail: true, selectTedId: null })
+                      () => this.setState({
+                        isShowModalDetail: true,
+                        selectTedId: null,
+                        totalBotOffInData: 0,
+                        totalBotOnInData: 0,
+                      })
                     }
                   >
                     <IconAdd src={images.add} alt="" />
@@ -286,9 +430,15 @@ class CustomCampaign extends Component {
             />
           </WrapperPaginationCustom>
         ) : (
-            ''
-          )}
+          ''
+        )}
         <Blank height={0.5} />
+        <Keyboard />
+        <PopUpHelp
+          currentTabId={currentTabId}
+          isOpen={isShowHelp}
+          onClose={() => { this.setState({ isShowHelp: false }); }}
+        />
         <Spinner isLoading={this.state.isLoading} />
       </Content>
     );

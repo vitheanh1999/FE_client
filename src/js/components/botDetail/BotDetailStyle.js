@@ -141,6 +141,18 @@ export const Name = styled.div`
   margin-bottom: ${props => props.marginBottom && props.marginBottom};
 `;
 
+export const NameTable = styled.div`
+  font-size: ${props => (props.fontSize ? props.fontSize : '')};
+  font-weight: 700;
+  margin-left: ${props => props.marginLeft};
+  width:${props => props.width};
+`;
+
+export const WrapperStatus = styled.div`
+  display: ${props => (props.tableStatus ? 'flex' : '')};
+  justify-content: center;
+  align-items: center;
+`
 export const NameArea = styled.div`
   width: 80%;
 `;

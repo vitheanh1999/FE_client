@@ -4,11 +4,8 @@ import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import Alert from '../../components/common/Alert/Alert';
 import NotFound from '../notFound/NotFound';
-import Dropdown from '../../components/common/Dropdown/Dropdown';
-import { LANGUAGE } from '../../constants/language';
 import i18n from '../../i18n/i18n';
 import StorageUtils, { STORAGE_KEYS } from '../../helpers/StorageUtils';
-import { ENABLE_CHANGE_LANGUAGE } from '../../config';
 import ApiErrorUtils from '../../helpers/ApiErrorUtils';
 import ApiErrorCode from '../../constants/apiErrorCode';
 import { MEMBER_ROLES, PAGE_TYPE } from '../../constants/auth';
@@ -26,14 +23,6 @@ import {
 import { SCREEN_SIZE } from '../../constants/screenSize';
 import images from '../../../assets/images';
 import { ENABLE_NEWS } from '../../config/localConfig';
-
-const SelectLangWrapper = styled.div`
-  position: absolute;
-  right: 1em;
-  top: 1em;
-  font-size: 1rem;
-  z-index: 1;
-`;
 
 const LoginForm = styled.div`
   display: flex;
@@ -102,7 +91,6 @@ class SuperLogin extends NotFound {
     this.refAlert = null;
     this.getAlertRef = this.getAlertRef.bind(this);
     this.handleChangeForm = this.handleChangeForm.bind(this);
-    this.handleChangeLanguage = this.handleChangeLanguage.bind(this);
     this.goToScreen = this.goToScreen.bind(this);
     this.onResize = this.onResize.bind(this);
     this.onCheckMaintainSuccess = this.onCheckMaintainSuccess.bind(this);
@@ -178,15 +166,6 @@ class SuperLogin extends NotFound {
     }
   }
 
-  handleChangeLanguage(langId, lang) {
-    i18n.changeLanguage(lang.value, (err, t) => {
-      if (err) return console.log('something went wrong loading', err);
-      t('key'); // -> same as i18next.t
-      return null;
-    });
-    this.setState({});
-  }
-
   renderButtonBackToTop() {
     return (
       <ButtonCore
@@ -211,6 +190,7 @@ class SuperLogin extends NotFound {
       submitCode,
       sendCode,
     } = this.props;
+
     const checkLandscape = (checkOrientation() === ORIENTATION.Landscape);
     return (
       <LoginForm>
@@ -237,28 +217,9 @@ class SuperLogin extends NotFound {
     const checkNotFound = this.renderNotFound();
     if (checkNotFound) return checkNotFound;
 
-    const currentLang = StorageUtils.getItem('i18nextLng');
-    const index = LANGUAGE.findIndex(item => item.value === currentLang.substr(0, 2));
-    let currentId = -1;
-    if (index !== -1) {
-      currentId = LANGUAGE.find(item => item.value === currentLang.substr(0, 2)).id;
-    }
-
     const fontSize = calculatorFontSize();
     return (
       <Fragment>
-        <SelectLangWrapper>
-          {
-            ENABLE_CHANGE_LANGUAGE ? (
-              <Dropdown
-                width="8"
-                data={LANGUAGE}
-                onChangeSelected={this.handleChangeLanguage}
-                defaultSelectedId={currentId}
-              />
-            ) : ''
-          }
-        </SelectLangWrapper>
         <Wrapper id="root-content" fontSize={fontSize}>
           <Helmet>
             <title>Fifties Hacker</title>

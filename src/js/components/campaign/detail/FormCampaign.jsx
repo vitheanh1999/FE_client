@@ -22,7 +22,7 @@ const Input = styled.input`
   padding: 0.278em;
   border-radius: 0.13334em;
   width: ${props => (props.inputText ? 60 : 100)}%;
-  background-color: ${props => (props.disabled ? '#ccc' : '#efefef')};
+  background-color: ${props => (props.disabled ? '#61636175' : '#efefef')};
 `;
 
 const InputText = styled.div`
@@ -45,20 +45,34 @@ const InputText = styled.div`
 `;
 
 export default class FormCampaign extends Form {
+  onChangeText(event) {
+    const { onChange, maxLength } = this.props;
+    if (maxLength >= 0) {
+      if (event.target.value.length <= maxLength) {
+        onChange(event);
+      }
+    } else {
+      onChange(event);
+    }
+  }
+
   renderInput() {
     const {
-      onChange, type, name,
+      type, name,
       value, disabled, autoFocus,
       placeholder, maxLength, pattern,
-      inputText, width,
+      inputText, width, onFocus,
     } = this.props;
     const { focus } = this.state;
     return (
       <WrapperInput width={width}>
         <Input
           type={type}
-          onChange={onChange}
-          onFocus={() => this.onFocus()}
+          onChange={event => this.onChangeText(event)}
+          onFocus={() => {
+            this.onFocus();
+            onFocus();
+          }}
           onBlur={e => this.onBlurInput(e)}
           ref={this.inputRef}
           focus={focus}
@@ -73,6 +87,7 @@ export default class FormCampaign extends Form {
           placeholder={placeholder}
           inputText={inputText}
           multiline
+          autoComplete="off"
         />
         {inputText && (<InputText><span>{inputText}</span></InputText>)}
       </WrapperInput>
@@ -82,10 +97,12 @@ export default class FormCampaign extends Form {
 
 FormCampaign.propTypes = {
   inputText: PropTypes.string,
-  width: PropTypes.number,
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  onFocus: PropTypes.func,
 };
 
 FormCampaign.defaultProps = {
   inputText: '',
   width: 17,
+  onFocus: () => {},
 };

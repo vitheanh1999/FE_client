@@ -74,7 +74,7 @@ class TabMenu extends Component {
         <TabItem
           key={item.value}
           active={index === item.value}
-          title={item.name}
+          title={item.key}
           subTitle={i18n.t(`${item.key}SubTitle`)}
           onClick={() => onChange(item)}
           icon={item.icon}

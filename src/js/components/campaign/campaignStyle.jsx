@@ -95,7 +95,6 @@ export const TotalText = styled.div`
 
 export const WrapperDetail = styled.div`
   width: 100%;
-  height: ${props => !props.isMobile && '40em'};
   display: flex;
   flex-direction: column;
   font-size: ${props => (props.fontSize && props.fontSize)}px;

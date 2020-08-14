@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { validateFilter, convertFloatText } from '../common/InputFloatField';
-import warningIcon10 from '../../../assets/lucImages/game-element-img/warning_icon10.png';
+import requiredIcon from '../../../assets/imgs/icons/requiredIcon.png';
 
 const StyleInput = styled.input`
   font-size: ${props => props.fontSize}em;
@@ -67,6 +67,9 @@ class CustomCampaignInput extends Component {
       });
       return false;
     }
+    this.setState({
+      isRequired: false,
+    });
     return true;
   }
 
@@ -101,7 +104,7 @@ class CustomCampaignInput extends Component {
           disabled={isDisabled}
         />
         {
-          isRequired && <IconRequired src={warningIcon10} />
+          isRequired && <IconRequired src={requiredIcon} />
         }
       </Wrapper>
     );

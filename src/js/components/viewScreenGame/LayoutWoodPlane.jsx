@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import images from '../../../assets/lucImage';
 import SummaryCount from './gameCommon/SummaryCount';
 import LobbyBoard from './gameCommon/lobbyBoard';
-import Toast from './gameCommon/Toast';
+import Toast from '../common/Toast/Toast';
 import { socketConnection } from './Utils';
 // import StorageUtils, { STORAGE_KEYS } from '../../helpers/StorageUtils';
 
@@ -79,6 +79,7 @@ class LayoutWoodPlane extends Component {
       shuffling: false,
       lobbyList,
       isWaitBet: false,
+      lastRound: null,
     };
     this.toastRef = React.createRef();
     this.lobbyBoardRef = React.createRef();
@@ -95,7 +96,7 @@ class LayoutWoodPlane extends Component {
   }
 
   updateLobbyBoard(nameTable) {
-    if(nameTable && nameTable.length>0) {
+    if (nameTable && nameTable.length > 0) {
       const { listBotAction } = this.props;
       listBotAction.fetchHistoryTable(nameTable, this.onSuccess, this.onError);
     }
@@ -114,38 +115,54 @@ class LayoutWoodPlane extends Component {
 
     if (data.code === 200) {
       const arrTurn = data.data[nameTable].history;
-      this.setState({ lobbyList: arrTurn },  () => this.updateFakeResultButton());
+      const lastRound = data.data[nameTable].last_round;
+      this.setState({ lobbyList: arrTurn, lastRound }, () => this.updateFakeResultButton());
     }
   }
 
   shuffling() {
     this.showStopBetToast();
-    this.setState({ lobbyList: []});
+    this.setState({ lobbyList: [] });
   }
 
   updateDataLobby(result) {
-    const item = {
-      id: 0, banker: 0, player: 0, tie: 0, b_pair: 0, p_pair: 0,
-    };
-    item.id = result.turnId;
-    const sub = parseInt(result.banker, 10) - parseInt(result.player, 10);
-    if (sub > 0) {
-      item.banker = 1;
-    } else if (sub === 0) {
-      item.tie = 1;
+    const { lobbyList, lastRound } = this.state;
+    if (result.round !== lastRound + 1) {
+      this.updateLobbyBoard(this.props.nameTable);
     } else {
-      item.player = 1;
-    }
+      const item = {
+        id: 0, banker: 0, player: 0, tie: 0, b_pair: 0, p_pair: 0,
+      };
+      item.id = result.turnId;
+      const sub = parseInt(result.banker, 10) - parseInt(result.player, 10);
+      if (sub > 0) {
+        item.banker = 1;
+      } else if (sub === 0) {
+        item.tie = 1;
+      } else {
+        item.player = 1;
+      }
 
-    if (result.playerCard.card_2.substring(6) === result.playerCard.card_3.substring(6)) {
-      item.p_pair = 1;
+      if (result.playerCard.card_2.substring(6) === result.playerCard.card_3.substring(6)) {
+        item.p_pair = 1;
+      }
+      if (result.bankerCard.card_1.substring(6) === result.bankerCard.card_2.substring(6)) {
+        item.b_pair = 1;
+      }
+      if (lobbyList.length >= 1) {
+        const lastTurn = lobbyList[lobbyList.length - 1];
+        if (result.turnId !== lastTurn.id) {
+          this.setState({
+            lobbyList: lobbyList.concat(item),
+            lastRound: result.round,
+          }, () => this.updateFakeResultButton());
+        }
+      }
+      else this.setState({
+        lobbyList: lobbyList.concat(item),
+        lastRound: result.round,
+      }, () => this.updateFakeResultButton());
     }
-    if (result.bankerCard.card_1.substring(6) === result.bankerCard.card_2.substring(6)) {
-      item.b_pair = 1;
-    }
-
-    const { lobbyList } = this.state;
-    this.setState({ lobbyList: lobbyList.concat(item) },  () => this.updateFakeResultButton());
   }
 
   registerReloadBoardMissTurn() {
@@ -163,7 +180,7 @@ class LayoutWoodPlane extends Component {
 
   UNSAFE_componentWillReceiveProps(newProps) {
     const { nameTable } = this.props;
-    if(nameTable !== newProps.nameTable) {
+    if (nameTable !== newProps.nameTable) {
       this.updateLobbyBoard(newProps.nameTable);
     }
   }
@@ -172,15 +189,15 @@ class LayoutWoodPlane extends Component {
   }
 
   showStopBetToast() {
-    this.toastRef.current.showToast('Stop bet', 3000);
+    //this.toastRef.current.showToast('Stop bet', 3000);
   }
 
   showToast(content, time = 3000, idToast = '') {
-    this.toastRef.current.showToast(content, time, idToast);
+    //this.toastRef.current.showToast(content, time, idToast);
   }
 
   closeToast(idToast = '') {
-    this.toastRef.current.closeToast(idToast);
+    //this.toastRef.current.closeToast(idToast);
   }
 
   checkDoubleData(result) {
@@ -274,12 +291,6 @@ class LayoutWoodPlane extends Component {
             unFakeData={this.unFakeData}
           />
         </WrapperLobby>
-        <Toast
-          customStyle={{
-            top: -19,
-          }}
-          ref={this.toastRef}
-        />
       </WoodPlane>
     );
   }

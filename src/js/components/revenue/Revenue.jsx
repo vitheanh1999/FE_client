@@ -13,6 +13,7 @@ import DropDown from '../common/Dropdown/Dropdown';
 import {
   SORT_BOT_OPTIONS, DEFAULT_DATE_DIFF,
   ALL_PAGE, FORMAT_DATE_TIME,
+  NUMBER_DATE_SHOW_REVENUE,
 } from '../../constants/Constants';
 import Alert from '../common/Alert/Alert';
 import ApiErrorUtils from '../../helpers/ApiErrorUtils';
@@ -28,6 +29,7 @@ class Revenue extends Component {
     this.state = {
       startDate: dayjs.utc().subtract(DEFAULT_DATE_DIFF, 'day').format(FORMAT_DATE_TIME),
       endDate: dayjs.utc().format(FORMAT_DATE_TIME),
+      minDate: dayjs.utc().subtract(NUMBER_DATE_SHOW_REVENUE, 'day').format(FORMAT_DATE_TIME),
       isLoading: false,
       idsSelected: -1,
     };
@@ -151,7 +153,7 @@ class Revenue extends Component {
   render() {
     const { chartData, payOffsData, listBots } = this.props;
     const {
-      startDate, endDate, isLoading, idsSelected,
+      startDate, endDate, minDate, isLoading, idsSelected,
     } = this.state;
     let maxLength = 0;
     const elementDocument = document.createElement('canvas');
@@ -220,6 +222,7 @@ class Revenue extends Component {
             labels={labels}
             startDate={startDate}
             endDate={endDate}
+            minDate={minDate}
             onChangeDate={this.onChangeDate}
             updateAt={chartData.updated_at}
           />

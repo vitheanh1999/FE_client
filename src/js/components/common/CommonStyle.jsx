@@ -146,6 +146,21 @@ export const ListInformation = styled.div`
   height: 100%;
   width: 80%;
 `;
+export const ListDescription = styled.div`
+  height: 100%;
+  width: 80%;
+`;
+export const Description = styled.p`
+  white-space: pre-wrap;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height:1.9em;
+  min-height: 3.7em;
+`;
 
 export const WrapperList = styled.div`
   cursor: pointer;
@@ -154,6 +169,7 @@ export const WrapperList = styled.div`
 `;
 
 export const WrapperListItem = styled.div`
+  cursor: pointer;
   padding: 1em 2%;
   width: 100%;
   height: ${props => props.height}em;
@@ -178,7 +194,6 @@ export const SpanTotal = styled.span`
 
 export const ModalWrapper = styled(Modal)`
   max-width: ${props => !props.isMobile && '80%'};
-
   > div {
     background-color: #333333;
     color: #fcfcfc;
@@ -189,6 +204,7 @@ export const ModalHeaderCustom = styled(ModalHeader)`
   height: 2.5em;
   font-weight: 700;
   padding: 0.5em;
+  align-items: center;
 
   > h5 {
     font-size: 1em;
@@ -196,6 +212,10 @@ export const ModalHeaderCustom = styled(ModalHeader)`
 
   button {
     color: #fcfcfc;
+    font-size: 1.2em;
+    :focus {
+      outline: none;
+    }
   }
   background-color: ${props => (props.bgrColor ? props.bgrColor : '#00647a')};
 `;

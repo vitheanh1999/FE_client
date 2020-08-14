@@ -14,6 +14,7 @@ import images from '../../theme/images';
 import Charge from '../charge/charge';
 import Header from '../../components/common/Header/Header';
 import Alert from '../../components/common/Alert/Alert';
+import ToastControl from '../../components/common/Toast/ToastControl';
 import Campaign from '../campaign/Campaign';
 import DashBoard from '../dashboard/DashBoard';
 import ListBots from '../listBots/ListBots';
@@ -84,6 +85,9 @@ class MainScreen extends BaseContainer {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.activeTab !== this.state.activeTab) {
       this.props.fetchUser(this.onSuccess, this.onError);
+    }
+    if (prevProps.lang !== this.props.lang) {
+      this.forceUpdate();
     }
   }
 
@@ -271,6 +275,7 @@ class MainScreen extends BaseContainer {
           }
         </Content>
         <Alert />
+        <ToastControl />
       </Background>
     );
   }
@@ -299,6 +304,7 @@ const mapStateToProps = state => ({
     totalNew: state.news.totalNew,
   },
   maintainInfo: state.Maintain.maintainInfo,
+  lang: state.Language.lang,
 });
 
 const mapDispatchToProps = dispatch => ({

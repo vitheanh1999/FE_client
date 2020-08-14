@@ -88,6 +88,7 @@ class CampaignDetail extends Component {
         profit_data: {
           max_profit: 0,
           min_profit: 0,
+          option_off_min: 1,
         },
       };
     }
@@ -190,6 +191,7 @@ class CampaignDetail extends Component {
       campaignData.profit_data = {
         max_profit: 0,
         min_profit: 0,
+        option_off_min: 1,
       };
     }
     this.setState({
@@ -281,7 +283,9 @@ class CampaignDetail extends Component {
     if (state.mode === Mode.Edit) {
       state.isEdited = true;
     }
-    state.valid = validateRequired(state.valid, valueInput, fieldName);
+    if (fieldName !== 'option_off_min') {
+      state.valid = validateRequired(state.valid, valueInput, fieldName);
+    }
     if (fieldName === 'point_rate') {
       if (valueInput <= state.settingPointRate.max) {
         // state.valid = validateMax(state.valid, valueInput, fieldName, state.settingPointRate.max);
@@ -397,8 +401,8 @@ class CampaignDetail extends Component {
       selectedTabId, campaignData, valid,
       isEdited, isLoading, help, settingPointRate,
     } = this.state;
-    const optionLogicPatterns = convertPatternCampaign(listLogicPatterns, campaignData.data.components[0], 'logic_pattern_name');
-    const optionBetPatterns = convertPatternCampaign(listBetPatterns, campaignData.data.components[0], 'bet_pattern_name');
+    const optionLogicPatterns = convertPatternCampaign(listLogicPatterns, campaignData.data.components[0], 'logic_pattern');
+    const optionBetPatterns = convertPatternCampaign(listBetPatterns, campaignData.data.components[0], 'bet_pattern');
     let maxWidth = optionLogicPatterns.maxWidth > optionBetPatterns.maxWidth
       ? optionLogicPatterns.maxWidth : optionBetPatterns.maxWidth;
     maxWidth = maxWidth / 18 + 4;

@@ -21,6 +21,11 @@ import iconLine from './imgs/icons/iconLine.png';
 import iconColumn from './imgs/icons/iconColumn.png';
 import iconCustomLogic from './imgs/icons/create-logic.png';
 import FEFavicon from './imgs/FEFavicon.jpg';
+import btnBackDelete from './imgs/keyboard/btnDelete.png';
+import jaFlag from './imgs/flag/ja_flag.png';
+import usFlag from './imgs/flag/us_flag.png';
+import jaFlagSquare from './imgs/flag/jpn.png';
+import usFlagSquare from './imgs/flag/usa.png';
 
 
 const images = {
@@ -47,6 +52,11 @@ const images = {
   iconColumn,
   iconCustomLogic,
   FEFavicon,
+  btnBackDelete,
+  jaFlag,
+  usFlag,
+  jaFlagSquare,
+  usFlagSquare,
 };
 
 export default images;

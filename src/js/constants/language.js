@@ -1,17 +1,21 @@
-import { images } from '../theme';
+import images from '../../assets/images';
+
+export const SETTING_LANGUAGE = 'SETTING_LANGUAGE';
 
 export const LANGUAGE = [
   {
-    id: -1,
-    text: 'ja',
-    icon: images.countryFlag.ja,
-    value: 'ja',
+    id: 0,
+    text: 'ENGLISH',
+    icon: images.usFlag,
+    squareIcon: images.usFlagSquare,
+    value: 'en',
   },
   {
-    id: 0,
-    text: 'en',
-    icon: images.countryFlag.en,
-    value: 'en',
+    id: -1,
+    text: '日本語',
+    icon: images.jaFlag,
+    squareIcon: images.jaFlagSquare,
+    value: 'ja',
   },
   // {
   //   id: 1,

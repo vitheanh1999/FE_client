@@ -1,10 +1,13 @@
 import Pusher from 'pusher-js';
 import dayjs from 'dayjs';
-
+import {
+  call,
+} from 'redux-saga/effects';
 import {
   KEY_PUSHER, OPTION_PUSHER,
   KEY_PUSHER_DASHBOARD, OPTION_PUSHER_DASHBOARD,
 } from '../../config';
+import api from '../../services/api';
 // TO DO
 // const KEY_PUSHER = 'd5780220254544c2aab3'; //product luc1
 // const OPTION_PUSHER = {
