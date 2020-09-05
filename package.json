@@ -86,7 +86,7 @@
     "http-server": "^0.11.1",
     "jsdom": "^14.0.0",
     "mocha": "^6.0.2",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.13.1",
     "stylelint": "^9.10.1",
     "stylelint-config-standard": "^18.2.0",
     "webpack": "^4.29.6",
